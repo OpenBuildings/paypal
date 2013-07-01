@@ -1,7 +1,7 @@
 {
     "name": "openbuildings/paypal",
     "description": "PayPal SDK for ExpressCheckout and AdaptivePayments. Supports recurring payments, simple payments, parallel payments and chained payments.",
-    "keywords": ["PayPal", "payments", "SDK", "API", "ExpressCheckout", "AdaptivePayments"],
+    "keywords": ["PayPal", "payments", "API", "ExpressCheckout", "AdaptivePayments"],
     "license": "BSD-3-Clause",
     "authors": [
         {
