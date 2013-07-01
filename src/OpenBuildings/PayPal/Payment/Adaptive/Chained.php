@@ -1,0 +1,41 @@
+<?php
+
+namespace OpenBuildings\PayPal;
+
+/**
+ * @author Haralan Dobrev <hdobrev@despark.com>
+ * @copyright (c) 2013 Despark Ltd.
+ * @license http://spdx.org/licenses/BSD-3-Clause
+ */
+class Payment_Adaptive_Chained extends Payment_Adaptive_Parallel {
+
+	public function fields($return_url, $cancel_url, $action_type = 'PAY')
+	{
+		$fields = parent::fields($return_url, $cancel_url, $action_type);
+		$order = $this->order();
+
+		$fields['receiverList'][0]['amount'] = number_format($order['total_price'], 2, '.', '');
+
+		$i = 1;
+		foreach ($order['receivers'] as $receiver)
+		{
+			if ($receiver['email'] != $this->_config('email'))
+			{
+				$fields['receiverList'][$i]['primary'] = 'false';
+				$i++;
+			}
+		}
+
+		if ($i > 1)
+		{
+			$fields['receiverList'][0]['primary'] = 'true';
+			
+			if ($this->_config('pay_only_primary') AND $action_type == 'PAY')
+			{
+				$fields['actionType'] = 'PAY_PRIMARY';
+			}
+		}
+
+		return $fields;
+	}
+}

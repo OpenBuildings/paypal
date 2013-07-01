@@ -1,0 +1,22 @@
+{
+    "name": "openbuildings/paypal",
+    "description": "PayPal SDK for ExpressCheckout and AdaptivePayments. Supports recurring payments, simple payments, parallel payments and chained payments.",
+    "keywords": ["PayPal", "payments", "SDK", "API", "ExpressCheckout", "AdaptivePayments"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Haralan Dobrev",
+            "email": "hdobrev@despark.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.5",
+        "ext-curl": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    },
+    "autoload": {
+        "psr-0": {"OpenBuildings\\PayPal\\": "src/"}
+    }
+}
