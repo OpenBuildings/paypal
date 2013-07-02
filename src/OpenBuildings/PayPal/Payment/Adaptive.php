@@ -254,9 +254,19 @@ class Payment_Adaptive extends Payment {
 		$url = Payment_Adaptive::ap_api_url($method);
 		$request_data = array_merge($request_data, $this->common_fields());
 
+		$headers = array(
+			'X-PAYPAL-REQUEST-DATA-FORMAT: NV',
+			'X-PAYPAL-RESPONSE-DATA-FORMAT: NV',
+			'X-PAYPAL-SECURITY-USERID: '.$this->config('username'),
+			'X-PAYPAL-SECURITY-PASSWORD: '.$this->config('password'),
+			'X-PAYPAL-SECURITY-SIGNATURE: '.$this->config('signature'),
+			'X-PAYPAL-SERVICE-VERSION: 1.6.0',
+			'X-PAYPAL-APPLICATION-ID: '.$this->config('app_id'),
+		);
+
 		try
 		{
-			return parent::request($url, $request_data);
+			return parent::request($url, $request_data, $headers);
 		}
 		catch (Request_Exception $exception)
 		{

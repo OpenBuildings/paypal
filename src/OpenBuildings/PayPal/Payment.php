@@ -112,12 +112,12 @@ abstract class Payment {
 
 	public function __construct(array $config = array())
 	{
-		$this->config(array_merge_recursive(Payment::$config, $config));
+		$this->config($config);
 	}
 
 	public function config($key, $value = NULL)
 	{
-		if ($value === NULL)
+		if ($value === NULL AND ! is_array($key))
 			return (isset($this->_config[$key]) AND array_key_exists($key, $this->_config))
 				? $this->_config[$key]
 				: NULL;
@@ -250,32 +250,28 @@ abstract class Payment {
 		return FALSE;
 	}
 
-	public function request($url, array $request_data = array(), $use_post = TRUE)
+	public function request($url, array $request_data = array(), array $headers = array())
 	{
 		// Create a new curl instance
 		$curl = curl_init();
 
 		$curl_options = array(
+			CURLOPT_URL => $url,
+			CURLOPT_POST = TRUE,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_SSL_VERIFYHOST => FALSE,
 			CURLOPT_RETURNTRANSFER => TRUE,
 		);
 
-		if ($use_post)
+		if ($request_data)
 		{
-			$curl_options[CURLOPT_POST] = TRUE;
-
-			if ($request_data)
-			{
-				$curl_options[CURLOPT_POSTFIELDS] = http_build_query($request_data, NULL, '&');
-			}
-		}
-		elseif ($request_data)
-		{
-			$url .= (strpos($url, '?') ? '&' : '?').http_build_query($request_data, NULL, '&');
+			$curl_options[CURLOPT_POSTFIELDS] = http_build_query($request_data, NULL, '&');
 		}
 
-		$curl_options[CURLOPT_URL] = $url;
+		if ($headers)
+		{
+			$curl_options[CURLOPT_HTTPHEADER] = $headers;
+		}
 
 		// Set curl options
 		curl_setopt_array($curl, $curl_options);
