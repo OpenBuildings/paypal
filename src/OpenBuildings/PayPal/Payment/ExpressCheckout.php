@@ -21,12 +21,7 @@ class Payment_ExpressCheckout extends Payment {
 		return $this->_request('GetExpressCheckoutDetails', $params);
 	}
 
-	/**
-	 * Make an SetExpressCheckout call.
-	 *
-	 * @param array $params NVP parameters
-	 */
-	public function set_express_checkout($return_url, $cancel_url, $notify_url = NULL)
+	protected function _set_params($return_url, $cancel_url, $notify_url = NULL)
 	{
 		$order = $this->order();
 
@@ -61,6 +56,18 @@ class Payment_ExpressCheckout extends Payment {
 		{
 			$params['PAYMENTREQUEST_0_NOTIFYURL'] = $notify_url;
 		}
+
+		return $params;
+	}
+
+	/**
+	 * Make an SetExpressCheckout call.
+	 *
+	 * @param array $params NVP parameters
+	 */
+	public function set_express_checkout($return_url, $cancel_url, $notify_url = NULL)
+	{
+		$params = $this->set_params($return_url, $cancel_url, $notify_url);
 
 		return $this->_request('SetExpressCheckout', $params);
 	}
