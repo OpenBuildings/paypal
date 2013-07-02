@@ -257,7 +257,7 @@ abstract class Payment {
 
 		$curl_options = array(
 			CURLOPT_URL => $url,
-			CURLOPT_POST = TRUE,
+			CURLOPT_POST => TRUE,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_SSL_VERIFYHOST => FALSE,
 			CURLOPT_RETURNTRANSFER => TRUE,
