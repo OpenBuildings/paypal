@@ -273,4 +273,20 @@ class Payment_Adaptive extends Payment {
 			throw $exception;
 		}
 	}
+
+	protected function _parse_response($response_string, $url, $request_data)
+	{
+		// Parse the response
+		parse_str($response_string, $response);
+
+		if ( ! isset($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE)
+			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error:code.', $url, $request_data, array(
+				':url' => $url,
+				':error' => isset($response['error(0)_message']) ? $response['error(0)_message'] : 'Unknown error',
+				':code' => isset($response['error(0)_errorId']) ? ' ('.$response['error(0)_errorId'].')' : '',
+			), $response);
+
+		return $response;
+
+	}
 }

@@ -276,7 +276,7 @@ abstract class Payment {
 		// Set curl options
 		curl_setopt_array($curl, $curl_options);
 
-		if (($response = curl_exec($curl)) === FALSE)
+		if (($response_string = curl_exec($curl)) === FALSE)
 		{
 			// Get the error code and message
 			$code  = curl_errno($curl);
@@ -295,16 +295,21 @@ abstract class Payment {
 		// Close curl
 		curl_close($curl);
 
+		return $this->_parse_response($response_string, $url, $request_data);
+	}
+
+	protected function _parse_response($response_string, $url, $request_data)
+	{
 		// Parse the response
-		parse_str($response, $data);
+		parse_str($response_string, $response);
 
-		if ( ! isset($data['ACK']) OR strpos($data['ACK'], 'Success') === FALSE)
-			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error (:code).', $url, $request_data, array(
+		if ( ! isset($response['ACK']) OR strpos($response['ACK'], 'Success') === FALSE)
+			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error:code.', $url, $request_data, array(
 				':url' => $url,
-				':error' => $data['L_LONGMESSAGE0'],
-				':code' => $data['L_ERRORCODE0'],
-			), $data);
+				':error' => isset($response['L_LONGMESSAGE0']) ? $response['L_LONGMESSAGE0'] : 'Unknown error',
+				':code' => isset($response['L_ERRORCODE0']) ? ' ('.$response['L_ERRORCODE0'].')' : '',
+			), $response);
 
-		return $data;
+		return $response;
 	}
 }
