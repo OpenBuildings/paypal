@@ -74,6 +74,21 @@ class PaymentTest extends \PHPUnit_Framework_TestCase {
 		
 	}
 
+	public function test_return_url()
+	{
+		
+	}
+
+	public function test_cancel_url()
+	{
+		
+	}
+
+	public function test_notify_url()
+	{
+		
+	}
+
 	public function test_environment()
 	{
 		

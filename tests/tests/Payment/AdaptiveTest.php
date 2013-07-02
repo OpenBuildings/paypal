@@ -29,6 +29,16 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 		
 	}
 
+	public function test_implicit_approval()
+	{
+		
+	}
+
+	public function test_action_type()
+	{
+		
+	}
+
 	public function test_do_payment()
 	{
 		

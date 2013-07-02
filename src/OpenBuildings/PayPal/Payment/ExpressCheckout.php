@@ -21,45 +21,6 @@ class Payment_ExpressCheckout extends Payment {
 		return $this->_request('GetExpressCheckoutDetails', $params);
 	}
 
-	protected function _set_params()
-	{
-		$order = $this->order();
-
-		$params = array(
-			// Total amount for the transaction
-			'PAYMENTREQUEST_0_AMT' => number_format($order['total_price'], 2, '.', ''),
-
-			// Price of the items being sold
-			'PAYMENTREQUEST_0_ITEMAMT' => number_format($order['items_price'], 2, '.', ''),
-
-			// Shipping costs for the whole transaction
-			'PAYMENTREQUEST_0_SHIPPINGAMT' => number_format($order['shipping_price'], 2, '.', ''),
-
-			'PAYMENTREQUEST_0_CURRENCYCODE' => $this->config('currency'),
-
-			'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
-			
-			'RETURNURL' => $this->return_url(),
-
-			'CANCELURL' => $this->cancel_url(),
-
-			'useraction' => 'commit',
-
-			// PayPal won't display shipping fields to the customer
-			// For digital goods this field is required and it must be set to 1.
-			'NOSHIPPING' => 1,
-
-			'ADDROVERRIDE' => 0,
-		);
-
-		if ($this->notify_url() !== NULL)
-		{
-			$params['PAYMENTREQUEST_0_NOTIFYURL'] = $this->notify_url();
-		}
-
-		return $params;
-	}
-
 	/**
 	 * Make an SetExpressCheckout call.
 	 *
@@ -93,17 +54,47 @@ class Payment_ExpressCheckout extends Payment {
 		));
 	}
 
+	protected function _set_params()
+	{
+		$order = $this->order();
+
+		$params = array(
+			// Total amount for the transaction
+			'PAYMENTREQUEST_0_AMT' => number_format($order['total_price'], 2, '.', ''),
+
+			// Price of the items being sold
+			'PAYMENTREQUEST_0_ITEMAMT' => number_format($order['items_price'], 2, '.', ''),
+
+			// Shipping costs for the whole transaction
+			'PAYMENTREQUEST_0_SHIPPINGAMT' => number_format($order['shipping_price'], 2, '.', ''),
+
+			'PAYMENTREQUEST_0_CURRENCYCODE' => $this->config('currency'),
+
+			'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
+			
+			'RETURNURL' => $this->return_url(),
+
+			'CANCELURL' => $this->cancel_url(),
+
+			'useraction' => 'commit',
+
+			// PayPal won't display shipping fields to the customer
+			// For digital goods this field is required and it must be set to 1.
+			'NOSHIPPING' => 1,
+
+			'ADDROVERRIDE' => 0,
+		);
+
+		if ($this->notify_url())
+		{
+			$params['PAYMENTREQUEST_0_NOTIFYURL'] = $this->notify_url();
+		}
+
+		return $params;
+	}
+
 	protected function _request($method, array $params = array())
 	{
-		// Create POST data
-		$post = array(
-			'METHOD'    => $method,
-			'VERSION'   => Payment_ExpressCheckout::API_VERSION,
-			'USER'      => $this->config('username'),
-			'PWD'       => $this->config('password'),
-			'SIGNATURE' => $this->config('signature'),
-		) + $params;
-
 		return parent::request(Payment::merchant_endpoint_url(), array(
 			'METHOD'    => $method,
 			'VERSION'   => Payment_ExpressCheckout::API_VERSION,

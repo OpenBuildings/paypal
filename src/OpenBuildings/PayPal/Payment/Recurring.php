@@ -12,13 +12,13 @@ class Payment_Recurring extends Payment_ExpressCheckout {
 	protected function _set_params()
 	{
 		return array_replace(parent::set_params(), array(
-			'PAYMENTREQUEST_0_AMT' => 0,
-			'PAYMENTREQUEST_0_ITEMAMT' => 0,
-			'PAYMENTREQUEST_0_SHIPPINGAMT' => 0,
-			'L_BILLINGTYPE0' => 'RecurringPayments',
-			'L_BILLINGAGREEMENTDESCRIPTION0' => $this->config('description'),
-			'L_PAYMENTREQUEST_0_ITEMCATEGORYn' => 'Digital',
-			'MAXAMT' => $this->transaction_amount(),
+			'PAYMENTREQUEST_0_AMT'             => 0,
+			'PAYMENTREQUEST_0_ITEMAMT'         => 0,
+			'PAYMENTREQUEST_0_SHIPPINGAMT'     => 0,
+			'L_BILLINGTYPE0'                   => 'RecurringPayments',
+			'L_BILLINGAGREEMENTDESCRIPTION0'   => $this->config('description'),
+			'L_PAYMENTREQUEST_0_ITEMCATEGORY0' => 'Digital',
+			'MAXAMT'                           => $this->transaction_amount(),
 		));
 	}
 
