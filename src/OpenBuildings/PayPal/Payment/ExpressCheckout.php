@@ -104,7 +104,7 @@ class Payment_ExpressCheckout extends Payment {
 			'SIGNATURE' => $this->config('signature'),
 		) + $params;
 
-		return parent::request($this->merchant_endpoint_url(), array(
+		return parent::request(Payment::merchant_endpoint_url(), array(
 			'METHOD'    => $method,
 			'VERSION'   => Payment_ExpressCheckout::API_VERSION,
 			'USER'      => $this->config('username'),

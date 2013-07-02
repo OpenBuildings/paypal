@@ -68,35 +68,31 @@ class Payment_Adaptive extends Payment {
 	public static function approve_url($pay_key, $mobile = FALSE)
 	{
 		if ($mobile)
-			return $this->webapps_url(array(
+			return Payment_Adaptive::webapps_url(array(
 				'paykey' => $pay_key
 			), TRUE);
 
-		return $this->webscr_url('_ap-payment', array(
+		return Payment::webscr_url('_ap-payment', array(
 			'paykey' => $pay_key
 		));
 	}
 
-	public function webapps_url(array $params = array(), $mobile = FALSE)
+	public static function webapps_url(array $params = array(), $mobile = FALSE)
 	{
 		if ($mobile)
 		{
 			$params['expType'] = 'mini';
 		}
 
-		return Payment::ENDPOINT_START.$this->environment().Payment_Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
+		return Payment::ENDPOINT_START.Payment::environment().Payment_Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
 	}
-
-	protected $_implicit_approval = FALSE;
-
-	protected $_action_type = 'PAY';
 
 	/**
 	 * API url for AdaptivePayments based on method and environment
 	 */
-	public function ap_api_url($method = NULL)
+	public static function ap_api_url($method = NULL)
 	{
-		$api_endpoint = Payment_Adaptive::AP_ENDPOINT_START.$this->environment().Payment_Adaptive::AP_ENDPOINT_END;
+		$api_endpoint = Payment_Adaptive::AP_ENDPOINT_START.Payment::environment().Payment_Adaptive::AP_ENDPOINT_END;
 
 		if ($method)
 		{
@@ -105,6 +101,10 @@ class Payment_Adaptive extends Payment {
 
 		return $api_endpoint;
 	}
+
+	protected $_implicit_approval = FALSE;
+
+	protected $_action_type = 'PAY';
 
 	/**
 	 * NVP fields required for the Pay API operation
@@ -251,7 +251,7 @@ class Payment_Adaptive extends Payment {
 
 	protected function _request($method, array $request_data = array())
 	{
-		$url = $this->ap_api_url($method);
+		$url = Payment_Adaptive::ap_api_url($method);
 		$request_data = array_merge($request_data, $this->common_fields());
 
 		try

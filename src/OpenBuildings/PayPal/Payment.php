@@ -24,8 +24,9 @@ abstract class Payment {
 
 	public static $instances = array();
 
+	public static $environment = Payment::ENVIRONMENT_SANDBOX;
+
 	public static $config = array(
-		'environment' => Payment::ENVIRONMENT_SANDBOX,
 		'app_id' => '',
 		'username' => '',
 		'password' => '',
@@ -68,6 +69,36 @@ abstract class Payment {
 		}
 
 		return $result;
+	}
+
+	public static function merchant_endpoint_url()
+	{
+		return Payment::MERCHANT_ENDPOINT_START.Payment::environment().Payment::MERCHANT_ENDPOINT_END;
+	}
+
+	/**
+	 * Webscr url based on command, params and environment
+	 */
+	public static function webscr_url($command = FALSE, array $params = array())
+	{
+		if ($command)
+		{
+			$params = array_reverse($params, TRUE);
+			$params['cmd'] = $command;
+			$params = array_reverse($params, TRUE);
+		}
+
+		return Payment::ENDPOINT_START.Payment::environment().Payment::WEBSCR_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
+	}
+
+	public static function environment()
+	{
+		if ( ! in_array(Payment::$environment, Payment::$_allowed_environments))
+			throw new Exception('PayPal environment :environment is not allowed!', array(
+				':environment' => Payment::$environment
+			));
+
+		return Payment::$environment;
 	}
 
 	protected $_config;
@@ -132,38 +163,6 @@ abstract class Payment {
 		return $this;
 	}
 
-	public function merchant_endpoint_url()
-	{
-		return Payment::MERCHANT_ENDPOINT_START.$this->environment().Payment::MERCHANT_ENDPOINT_END;
-	}
-
-	/**
-	 * Webscr url based on command, params and environment
-	 */
-	public function webscr_url($command = FALSE, array $params = array())
-	{
-		if ($command)
-		{
-			$params = array_reverse($params, TRUE);
-			$params['cmd'] = $command;
-			$params = array_reverse($params, TRUE);
-		}
-
-		return Payment::ENDPOINT_START.$this->environment().Payment::WEBSCR_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
-	}
-
-	public function environment()
-	{
-		$environment = $this->config('environment');
-
-		if ( ! in_array($environment, Payment::$_allowed_environments))
-			throw new Exception('PayPal environment :environment is not allowed!', array(
-				':environment' => $environment
-			));
-
-		return $environment;
-	}
-
 	/**
 	 * Validates an IPN request from PayPayl.
 	 */
@@ -197,7 +196,7 @@ abstract class Payment {
 			$request_data .= "&$key=$value";
 		}
 
-		$url = $this->webscr_url();
+		$url = Payment::webscr_url();
 
 		$curl = curl_init($url);
 		curl_setopt_array($curl, array(
