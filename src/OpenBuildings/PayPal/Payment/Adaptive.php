@@ -125,6 +125,8 @@ class Payment_Adaptive extends Payment {
 		$order = $this->order();
 
 		$fields = array(
+			'returnUrl' => $this->return_url(),
+			'cancelUrl' => $this->cancel_url(),
 			'actionType' => $this->action_type(),
 			'receiverList' => array(
 				array(
@@ -139,11 +141,6 @@ class Payment_Adaptive extends Payment {
 		if ($this->implicit_approval())
 		{
 			$fields['senderEmail'] = $this->config('email');
-		}
-		else
-		{
-			$fields['returnUrl'] = $this->return_url();
-			$fields['cancelUrl'] = $this->cancel_url();
 		}
 
 		if ( ! in_array($this->config('fees_payer'), Payment_Adaptive::$_allowed_fees_payer_types))
@@ -194,7 +191,7 @@ class Payment_Adaptive extends Payment {
 	public function action_type($action_type = NULL)
 	{
 		if ($action_type === NULL)
-			return $this->_action_type = $action_type;
+			return $this->_action_type;
 
 		$this->_action_type = $action_type;
 

@@ -147,7 +147,7 @@ abstract class Payment {
 	public function return_url($return_url = NULL)
 	{
 		if ($return_url === NULL)
-			return $this->_return_url = $return_url;
+			return $this->_return_url;
 
 		$this->_return_url = $return_url;
 
@@ -157,7 +157,7 @@ abstract class Payment {
 	public function cancel_url($cancel_url = NULL)
 	{
 		if ($cancel_url === NULL)
-			return $this->_cancel_url = $cancel_url;
+			return $this->_cancel_url;
 
 		$this->_cancel_url = $cancel_url;
 
@@ -167,7 +167,7 @@ abstract class Payment {
 	public function notify_url($notify_url = NULL)
 	{
 		if ($notify_url === NULL)
-			return $this->_notify_url = $notify_url;
+			return $this->_notify_url;
 
 		$this->_notify_url = $notify_url;
 
