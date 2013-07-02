@@ -30,6 +30,7 @@ abstract class Payment {
 		'username' => '',
 		'password' => '',
 		'signature' => '',
+		'email' => '',
 		'client_id' => '',
 		'secret' => '',
 		'currency' => 'USD',
@@ -73,6 +74,10 @@ abstract class Payment {
 
 	protected $_order = array();
 
+	protected $_return_url = NULL;
+
+	protected $_cancel_url = NULL;
+
 	public function __construct(array $config = array())
 	{
 		$this->config(array_merge_recursive(Payment::$config, $config));
@@ -107,6 +112,26 @@ abstract class Payment {
 		return $this;
 	}
 
+	public function return_url($return_url = NULL)
+	{
+		if ($return_url === NULL)
+			return $this->_return_url = $return_url;
+
+		$this->_return_url = $return_url;
+
+		return $this;
+	}
+
+	public function cancel_url($cancel_url = NULL)
+	{
+		if ($cancel_url === NULL)
+			return $this->_cancel_url = $cancel_url;
+
+		$this->_cancel_url = $cancel_url;
+
+		return $this;
+	}
+
 	public function merchant_endpoint_url()
 	{
 		return Payment::MERCHANT_ENDPOINT_START.$this->environment().Payment::MERCHANT_ENDPOINT_END;
@@ -129,7 +154,7 @@ abstract class Payment {
 
 	public function environment()
 	{
-		$environment = $this->_config('environment');
+		$environment = $this->config('environment');
 
 		if ( ! in_array($environment, Payment::$_allowed_environments))
 			throw new Exception('PayPal environment :environment is not allowed!', array(

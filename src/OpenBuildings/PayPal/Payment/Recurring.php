@@ -9,11 +9,9 @@ namespace OpenBuildings\PayPal;
  */
 class Payment_Recurring extends Payment_ExpressCheckout {
 
-	protected function _set_params($return_url, $cancel_url, $notify_url = NULL)
+	protected function _set_params()
 	{
-		$params = parent::set_params($return_url, $cancel_url, $notify_url);
-
-		return array_replace($params, array(
+		return array_replace(parent::set_params(), array(
 			'PAYMENTREQUEST_0_AMT' => 0,
 			'PAYMENTREQUEST_0_ITEMAMT' => 0,
 			'PAYMENTREQUEST_0_SHIPPINGAMT' => 0,

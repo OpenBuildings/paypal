@@ -9,14 +9,14 @@ namespace OpenBuildings\PayPal;
  */
 class Payment_Adaptive_Parallel extends Payment_Adaptive {
 
-	public function fields($return_url, $cancel_url, $action_type = 'PAY')
+	public function fields()
 	{
-		$fields = parent::fields($return_url, $cancel_url, $action_type);
+		$fields = parent::fields();
 		$order = $this->order();
 
 		$payment_type = FALSE;
 
-		if (($payment_type = $this->_config('payment_type'))
+		if (($payment_type = $this->config('payment_type'))
 		 AND (is_string($payment_type) OR is_array($payment_type)))
 		{
 			$payment_type = (is_string($payment_type))
@@ -32,9 +32,9 @@ class Payment_Adaptive_Parallel extends Payment_Adaptive {
 		$i = 1;
 		foreach ($order['receivers'] as $receiver)
 		{
-			if ($receiver['email'] != $this->_config('email'))
+			if ($receiver['email'] != $this->config('email'))
 			{
-				$store_share = ($receiver['cut'] ?: $this->_config('default_cut')) / 100 * $receiver['total_price'];
+				$store_share = ($receiver['cut'] ?: $this->config('default_cut')) / 100 * $receiver['total_price'];
 				$fields['receiverList'][$i]['amount'] = number_format($store_share, 2, '.', '');
 
 				$fields['receiverList'][$i]['email'] = $receiver['email'];

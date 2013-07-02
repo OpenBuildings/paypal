@@ -65,16 +65,6 @@ class Payment_Adaptive extends Payment {
 		self::FEES_PAYER_SECONDARYONLY,
 	);
 
-	public function webapps_url(array $params = array(), $mobile = FALSE)
-	{
-		if ($mobile)
-		{
-			$params['expType'] = 'mini';
-		}
-
-		return Payment::ENDPOINT_START.$this->environment().Payment_Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
-	}
-
 	public static function approve_url($pay_key, $mobile = FALSE)
 	{
 		if ($mobile)
@@ -87,7 +77,19 @@ class Payment_Adaptive extends Payment {
 		));
 	}
 
+	public function webapps_url(array $params = array(), $mobile = FALSE)
+	{
+		if ($mobile)
+		{
+			$params['expType'] = 'mini';
+		}
+
+		return Payment::ENDPOINT_START.$this->environment().Payment_Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
+	}
+
 	protected $_implicit_approval = FALSE;
+
+	protected $_action_type = 'PAY';
 
 	/**
 	 * API url for AdaptivePayments based on method and environment
@@ -118,42 +120,50 @@ class Payment_Adaptive extends Payment {
 	/**
 	 * NVP fields for a Simple payment
 	 */
-	public function fields($return_url, $cancel_url, $action_type = 'PAY')
+	public function fields()
 	{
 		$order = $this->order();
 
 		$fields = array(
-			'actionType' => $action_type,
-			'returnUrl' => $return_url,
-			'cancelUrl' => $cancel_url,
+			'actionType' => $this->action_type(),
 			'receiverList' => array(
 				array(
-					'email' => $this->_config('email'),
+					'email' => $this->config('email'),
 					'amount' => number_format($order['total_price'], 2, '.', ''),
 				)
 			),
-			'currencyCode' => $this->_config('currency'),
-			'reverseAllParallelPaymentsOnError' => $this->_config('reverse_on_error') ? 'true' : 'false'
+			'currencyCode' => $this->config('currency'),
+			'reverseAllParallelPaymentsOnError' => $this->config('reverse_on_error') ? 'true' : 'false'
 		);
 
-		if ( ! in_array($this->_config('fees_payer'), Payment_Adaptive::$_allowed_fees_payer_types))
+		if ($this->implicit_approval())
+		{
+			$fields['senderEmail'] = $this->config('email');
+		}
+		else
+		{
+			$fields['returnUrl'] = $this->return_url();
+			$fields['cancelUrl'] = $this->cancel_url();
+		}
+
+		if ( ! in_array($this->config('fees_payer'), Payment_Adaptive::$_allowed_fees_payer_types))
 			throw new Exception('[PayPal Pay]: Fees payer type ":feesPayer" is not allowed!', array(
-				':feesPayer' => $this->_config('fees_payer')
+				':feesPayer' => $this->config('fees_payer')
 			));
 
-		$fields['feesPayer'] = $this->_config('fees_payer');
+		$fields['feesPayer'] = $this->config('fees_payer');
 
-		if ($purchase->order_number)
+		if ( ! empty($order['order_number']))
 		{
 			$fields['trackingId'] = $purchase->order_number;
 		}
 
-		if ($this->_config('ipn_url'))
+		if ($this->config('ipn_url'))
 		{
-			$fields['ipnNotificationUrl'] = $this->_config('ipn_url');
+			$fields['ipnNotificationUrl'] = $this->config('ipn_url');
 		}
 
-		if (($payment_type = $this->_config('payment_type')))
+		if (($payment_type = $this->config('payment_type')))
 		{
 			if (is_string($payment_type)
 			 OR (is_array($payment_type)
@@ -181,9 +191,19 @@ class Payment_Adaptive extends Payment {
 		return $this;
 	}
 
-	public function do_payment($return_url, $cancel_url, $action_type = 'PAY')
+	public function action_type($action_type = NULL)
 	{
-		$fields = $this->fields($return_url, $cancel_url, $action_type);
+		if ($action_type === NULL)
+			return $this->_action_type = $action_type;
+
+		$this->_action_type = $action_type;
+
+		return $this;
+	}
+
+	public function do_payment()
+	{
+		$fields = $this->fields();
 		$receiver_list = Payment::array_to_nvp($fields, 'receiverList', 'receiver');
 		unset($fields['receiverList']);
 		return $this->pay(array_merge_recursive($fields, $receiver_list));

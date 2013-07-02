@@ -21,7 +21,7 @@ class Payment_ExpressCheckout extends Payment {
 		return $this->_request('GetExpressCheckoutDetails', $params);
 	}
 
-	protected function _set_params($return_url, $cancel_url, $notify_url = NULL)
+	protected function _set_params()
 	{
 		$order = $this->order();
 
@@ -35,13 +35,13 @@ class Payment_ExpressCheckout extends Payment {
 			// Shipping costs for the whole transaction
 			'PAYMENTREQUEST_0_SHIPPINGAMT' => number_format($order['shipping_price'], 2, '.', ''),
 
-			'PAYMENTREQUEST_0_CURRENCYCODE' => $this->_config('currency'),
+			'PAYMENTREQUEST_0_CURRENCYCODE' => $this->config('currency'),
 
 			'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
 			
-			'RETURNURL' => $return_url,
+			'RETURNURL' => $this->return_url(),
 
-			'CANCELURL' => $cancel_url,
+			'CANCELURL' => $this->cancel_url(),
 
 			'useraction' => 'commit',
 
@@ -52,9 +52,9 @@ class Payment_ExpressCheckout extends Payment {
 			'ADDROVERRIDE' => 0,
 		);
 
-		if ($notify_url !== NULL)
+		if ($this->notify_url() !== NULL)
 		{
-			$params['PAYMENTREQUEST_0_NOTIFYURL'] = $notify_url;
+			$params['PAYMENTREQUEST_0_NOTIFYURL'] = $this->notify_url();
 		}
 
 		return $params;
@@ -65,11 +65,9 @@ class Payment_ExpressCheckout extends Payment {
 	 *
 	 * @param array $params NVP parameters
 	 */
-	public function set_express_checkout($return_url, $cancel_url, $notify_url = NULL)
+	public function set_express_checkout()
 	{
-		$params = $this->set_params($return_url, $cancel_url, $notify_url);
-
-		return $this->_request('SetExpressCheckout', $params);
+		return $this->_request('SetExpressCheckout', $this->set_params());
 	}
 
 	public function do_express_checkout_payment($token, $payer_id)
@@ -101,17 +99,17 @@ class Payment_ExpressCheckout extends Payment {
 		$post = array(
 			'METHOD'    => $method,
 			'VERSION'   => Payment_ExpressCheckout::API_VERSION,
-			'USER'      => $this->_config('username'),
-			'PWD'       => $this->_config('password'),
-			'SIGNATURE' => $this->_config('signature'),
+			'USER'      => $this->config('username'),
+			'PWD'       => $this->config('password'),
+			'SIGNATURE' => $this->config('signature'),
 		) + $params;
 
 		return parent::request($this->merchant_endpoint_url(), array(
 			'METHOD'    => $method,
 			'VERSION'   => Payment_ExpressCheckout::API_VERSION,
-			'USER'      => $this->_config('username'),
-			'PWD'       => $this->_config('password'),
-			'SIGNATURE' => $this->_config('signature'),
+			'USER'      => $this->config('username'),
+			'PWD'       => $this->config('password'),
+			'SIGNATURE' => $this->config('signature'),
 		) + $params);
 	}
 }

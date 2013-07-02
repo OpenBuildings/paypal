@@ -1,4 +1,4 @@
-__PayPal SDK for ExpressCheckout and AdaptivePayments.__
+__PayPal SDK for ExpressCheckout and Adaptive Payments.__
 
 [![Build Status](https://travis-ci.org/OpenBuildings/paypal.png?branch=master)](https://travis-ci.org/OpenBuildings/paypal) [![Latest Stable Version](https://poser.pugx.org/openbuildings/paypal/v/stable.png)](https://packagist.org/packages/openbuildings/paypal)
 
@@ -34,8 +34,12 @@ $payment->order(array(
     'total_price' => 13
 ));
 
-// Send a SetExpressCheckout API call with return url and cancel url
-$response = $payment->set_express_checkout('example.com/success', 'example.com/cancelled');
+// Set additional params needed for ExpressCheckout
+$payment->return_url('example.com/success');
+$payment->cancel_url('example.com/success');
+
+// Send a SetExpressCheckout API call
+$response = $payment->set_express_checkout();
 
 // Finish the payment with the token and the payer id received.
 $payment->do_express_checkout_payment($response['TOKEN'], $response['PAYERID']);
@@ -48,6 +52,7 @@ Documentation
  * [Getting started](docs/getting-started.md)
  * [Configuration](docs/configuration.md)
  * [ExpressCheckout](docs/ExpressCheckout.md)
+ * [Recurring Payments](docs/recurring.md)
  * [Adaptive Payments](docs/adaptive-payments.md)
 
 Contributing
