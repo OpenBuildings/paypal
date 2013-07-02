@@ -130,8 +130,8 @@ class Payment_Adaptive extends Payment {
 			'actionType' => $this->action_type(),
 			'receiverList' => array(
 				array(
-					'email' => $this->config('email'),
-					'amount' => number_format($order['total_price'], 2, '.', ''),
+					'email' => $order['receiver']['email'],
+					'amount' => number_format($order['receiver']['amount'], 2, '.', ''),
 				)
 			),
 			'currencyCode' => $this->config('currency'),
