@@ -158,9 +158,9 @@ class Payment_Adaptive extends Payment {
 			$fields['trackingId'] = $purchase->order_number;
 		}
 
-		if ($this->config('ipn_url'))
+		if ($this->notify_url())
 		{
-			$fields['ipnNotificationUrl'] = $this->config('ipn_url');
+			$fields['ipnNotificationUrl'] = $this->notify_url();
 		}
 
 		if (($payment_type = $this->config('payment_type')))

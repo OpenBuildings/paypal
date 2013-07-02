@@ -35,7 +35,6 @@ abstract class Payment {
 		'client_id' => '',
 		'secret' => '',
 		'currency' => 'USD',
-		'ipn_url' => FALSE,
 	);
 
 	protected static $_allowed_environments = array(
@@ -109,6 +108,8 @@ abstract class Payment {
 
 	protected $_cancel_url = NULL;
 
+	protected $_notify_url = NULL;
+
 	public function __construct(array $config = array())
 	{
 		$this->config(array_merge_recursive(Payment::$config, $config));
@@ -159,6 +160,16 @@ abstract class Payment {
 			return $this->_cancel_url = $cancel_url;
 
 		$this->_cancel_url = $cancel_url;
+
+		return $this;
+	}
+
+	public function notify_url($notify_url = NULL)
+	{
+		if ($notify_url === NULL)
+			return $this->_notify_url = $notify_url;
+
+		$this->_notify_url = $notify_url;
 
 		return $this;
 	}
