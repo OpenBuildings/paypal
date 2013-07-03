@@ -34,7 +34,6 @@ class Payment_Adaptive_Parallel extends Payment_Adaptive {
 		{
 			if ($receiver['email'] != $this->config('email'))
 			{
-				$store_share = ($receiver['cut'] ?: $this->config('default_cut')) / 100 * $receiver['total_price'];
 				$fields['receiverList'][$i]['amount'] = number_format($store_share, 2, '.', '');
 
 				$fields['receiverList'][$i]['email'] = $receiver['email'];

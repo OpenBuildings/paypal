@@ -16,6 +16,21 @@ class Payment_Adaptive extends Payment {
 	const WEBAPPS_ENDPOINT_END = 'paypal.com/webapps/adaptivepayment/flow/pay';
 
 	/**
+	 * Use this option if you are not using the Pay request in combination with ExecutePayment
+	 */
+	const ACTION_TYPE_PAY = 'PAY';
+
+	/**
+	 *  Use this option to set up the payment instructions with SetPaymentOptions and then execute the payment at a later time with the ExecutePayment.
+	 */
+	const ACTION_TYPE_CREATE = 'CREATE';
+
+	/**
+	 * For chained payments only, specify this value to delay payments to the secondary receivers; only the payment to the primary receiver is processed.
+	 */
+	const ACTION_TYPE_PAY_PRIMARY = 'PAY_PRIMARY';
+
+	/**
 	 * Sender pays all fees (for personal, implicit simple/parallel payments; do not use for chained or unilateral payments)
 	 */
 	const FEES_PAYER_SENDER = 'SENDER';
@@ -58,11 +73,18 @@ class Payment_Adaptive extends Payment {
 
 	const DETAIL_LEVEL = 'ReturnAll';
 
-	private static $_allowed_fees_payer_types = array(
+	protected static $_allowed_action_types = array(
+		self::ACTION_TYPE_PAY,
+		self::ACTION_TYPE_CREATE,
+	);
+
+	protected static $_allowed_payment_types = array(
+	);
+
+	protected static $_allowed_fees_payer_types = array(
 		self::FEES_PAYER_SENDER,
 		self::FEES_PAYER_PRIMARYRECEIVER,
 		self::FEES_PAYER_EACHRECEIVER,
-		self::FEES_PAYER_SECONDARYONLY,
 	);
 
 	public static function approve_url($pay_key, $mobile = FALSE)
@@ -144,7 +166,7 @@ class Payment_Adaptive extends Payment {
 		}
 
 		if ( ! in_array($this->config('fees_payer'), Payment_Adaptive::$_allowed_fees_payer_types))
-			throw new Exception('[PayPal Pay]: Fees payer type ":feesPayer" is not allowed!', array(
+			throw new Exception('Fees payer type ":feesPayer" is not allowed!', array(
 				':feesPayer' => $this->config('fees_payer')
 			));
 
@@ -164,9 +186,9 @@ class Payment_Adaptive extends Payment {
 		{
 			if (is_string($payment_type)
 			 OR (is_array($payment_type)
-			  AND isset($payment_type['primary']) AND $payment_type = $payment_type['primary']))
+			  AND ! empty($payment_type['primary'])))
 			{
-				$fields['receiverList'][0]['paymentType'] = $paymentType;
+				$fields['receiverList'][0]['paymentType'] = $payment_type['primary'];
 			}
 		}
 

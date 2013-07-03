@@ -9,6 +9,19 @@ namespace OpenBuildings\PayPal;
  */
 class Payment_Adaptive_Chained extends Payment_Adaptive_Parallel {
 
+	protected static $_allowed_action_types = array(
+		self::ACTION_TYPE_PAY,
+		self::ACTION_TYPE_CREATE,
+		self::ACTION_TYPE_PAY_PRIMARY,
+	);
+
+	protected static $_allowed_fees_payer_types = array(
+		self::FEES_PAYER_SENDER,
+		self::FEES_PAYER_PRIMARYRECEIVER,
+		self::FEES_PAYER_EACHRECEIVER,
+		self::FEES_PAYER_SECONDARYONLY
+	);
+
 	public function fields()
 	{
 		$fields = parent::fields();

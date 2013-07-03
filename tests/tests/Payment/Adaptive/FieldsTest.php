@@ -16,6 +16,12 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
 		parent::setUp();
 
 		$this->payment = Payment::instance('Adaptive');
+		$this->payment->order(array(
+			'receiver' => array(
+				'email' => 'contact@example.com',
+				'amount' => 10
+			)
+		));
 		$this->payment->config('fees_payer', Payment_Adaptive::FEES_PAYER_EACHRECEIVER);
 	}
 
@@ -28,5 +34,24 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
 		$this->payment->implicit_approval(FALSE);
 
 		$this->assertArrayNotHasKey('senderEmail', $this->payment->fields());
+	}
+
+	public function test_validate_fees_payer()
+	{
+		$this->payment->config('fees_payer', 'invalid_fees_payer');
+
+		$this->setExpectedException('OpenBuildings\PayPal\Exception', 'Fees payer type "invalid_fees_payer" is not allowed!');
+
+		$this->payment->fields();
+	}
+
+	public function test_ipn_url()
+	{
+		$this->payment->notify_url('example.com/ipn');
+
+		$fields = $this->payment->fields();
+
+		$this->assertArrayHasKey('ipnNotificationUrl', $fields);
+		$this->assertEquals('example.com/ipn', $fields['ipnNotificationUrl']);
 	}
 }
