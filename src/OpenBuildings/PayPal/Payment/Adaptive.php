@@ -87,6 +87,16 @@ class Payment_Adaptive extends Payment {
 		self::FEES_PAYER_EACHRECEIVER,
 	);
 
+	public static function webapps_url(array $params = array(), $mobile = FALSE)
+	{
+		if ($mobile)
+		{
+			$params['expType'] = 'mini';
+		}
+
+		return Payment::ENDPOINT_START.Payment::environment().Payment_Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
+	}
+
 	public static function approve_url($pay_key, $mobile = FALSE)
 	{
 		if ($mobile)
@@ -97,16 +107,6 @@ class Payment_Adaptive extends Payment {
 		return Payment::webscr_url('_ap-payment', array(
 			'paykey' => $pay_key
 		));
-	}
-
-	public static function webapps_url(array $params = array(), $mobile = FALSE)
-	{
-		if ($mobile)
-		{
-			$params['expType'] = 'mini';
-		}
-
-		return Payment::ENDPOINT_START.Payment::environment().Payment_Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
 	}
 
 	/**
@@ -174,7 +174,7 @@ class Payment_Adaptive extends Payment {
 
 		if ( ! empty($order['order_number']))
 		{
-			$fields['trackingId'] = $purchase->order_number;
+			$fields['trackingId'] = $order['order_number'];
 		}
 
 		if ($this->notify_url())

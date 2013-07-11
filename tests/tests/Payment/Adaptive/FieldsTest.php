@@ -54,4 +54,20 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertArrayHasKey('ipnNotificationUrl', $fields);
 		$this->assertEquals('example.com/ipn', $fields['ipnNotificationUrl']);
 	}
+
+	public function test_tracking_id()
+	{
+		$this->payment->order(array(
+			'receiver' => array(
+				'email' => 'contact@example.com',
+				'amount' => 10
+			),
+			'order_number' => 'ABCDE'
+		));
+
+		$fields = $this->payment->fields();
+
+		$this->assertArrayHasKey('trackingId', $fields);
+		$this->assertEquals('ABCDE', $fields['trackingId']);
+	}
 }
