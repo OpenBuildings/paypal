@@ -6,6 +6,12 @@ php:
   - 5.4
   - 5.5
 
+#whitelist
+branches:
+  only:
+    - master
+    - /^feature-.*$/
+
 script:
   - mkdir -p build/logs
   - phpunit --coverage-clover build/logs/clover.xml
