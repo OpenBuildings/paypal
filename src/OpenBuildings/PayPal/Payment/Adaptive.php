@@ -79,11 +79,16 @@ class Payment_Adaptive extends Payment {
 	);
 
 	protected static $_allowed_payment_types = array(
+		self::PAYMENT_TYPE_GOODS,
+		self::PAYMENT_TYPE_SERVICE,
+		self::PAYMENT_TYPE_PERSONAL,
+		self::PAYMENT_TYPE_CASHADVANCE,
+		self::PAYMENT_TYPE_DIGITALGOODS,
+		self::PAYMENT_TYPE_BANK_MANAGED_WITHDRAWAL,
 	);
 
 	protected static $_allowed_fees_payer_types = array(
 		self::FEES_PAYER_SENDER,
-		self::FEES_PAYER_PRIMARYRECEIVER,
 		self::FEES_PAYER_EACHRECEIVER,
 	);
 
@@ -128,6 +133,16 @@ class Payment_Adaptive extends Payment {
 
 	protected $_action_type = 'PAY';
 
+	public function __construct(array $config = array())
+	{
+		parent::__construct($config);
+
+		if ($fees_payer = $this->config('fees_payer'))
+		{
+			$this->fees_payer($fees_payer);
+		}
+	}
+
 	/**
 	 * NVP fields required for the Pay API operation
 	 */
@@ -166,8 +181,8 @@ class Payment_Adaptive extends Payment {
 		}
 
 		if ( ! in_array($this->config('fees_payer'), Payment_Adaptive::$_allowed_fees_payer_types))
-			throw new Exception('Fees payer type ":feesPayer" is not allowed!', array(
-				':feesPayer' => $this->config('fees_payer')
+			throw new Exception('Fees payer type ":fees_payer" is not allowed!', array(
+				':fees_payer' => $this->config('fees_payer')
 			));
 
 		$fields['feesPayer'] = $this->config('fees_payer');
@@ -182,13 +197,19 @@ class Payment_Adaptive extends Payment {
 			$fields['ipnNotificationUrl'] = $this->notify_url();
 		}
 
-		if (($payment_type = $this->config('payment_type')))
+		if (($payment_type = $this->config('payment_type'))
+		 AND (is_string($payment_type) OR is_array($payment_type)))
 		{
-			if (is_string($payment_type)
-			 OR (is_array($payment_type)
-			  AND ! empty($payment_type['primary'])))
+			$payment_type = (is_string($payment_type))
+				? $payment_type
+				: (( ! empty($payment_type['primary']))
+					? $payment_type['primary']
+					: FALSE
+				);
+
+			if ($payment_type)
 			{
-				$fields['receiverList'][0]['paymentType'] = $payment_type['primary'];
+				$fields['receiverList'][0]['paymentType'] = $payment_type;
 			}
 		}
 
@@ -215,7 +236,27 @@ class Payment_Adaptive extends Payment {
 		if ($action_type === NULL)
 			return $this->_action_type;
 
+		if ( ! in_array($action_type, self::$_allowed_action_types))
+			throw new Exception('Action type ":action_type" is not allowed!', array(
+				':action_type' => $action_type
+			));
+
 		$this->_action_type = $action_type;
+
+		return $this;
+	}
+
+	public function fees_payer($fees_payer = NULL)
+	{
+		if ($fees_payer === NULL)
+			return $this->_fees_payer;
+
+		if ( ! in_array($fees_payer, self::$_allowed_fees_payer_types))
+			throw new Exception('Fees payer type ":fees_payer" is not allowed!', array(
+				':fees_payer' => $fees_payer
+			));
+
+		$this->_fees_payer = $fees_payer;
 
 		return $this;
 	}

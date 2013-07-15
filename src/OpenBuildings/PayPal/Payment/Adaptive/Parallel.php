@@ -21,7 +21,7 @@ class Payment_Adaptive_Parallel extends Payment_Adaptive {
 		{
 			$payment_type = (is_string($payment_type))
 				? $payment_type
-				: ((isset($payment_type['secondary']) AND $payment_type['secondary'])
+				: ( ! empty($payment_type['secondary'])
 					? $payment_type['secondary']
 					: FALSE
 				);
