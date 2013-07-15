@@ -11,7 +11,7 @@ class Payment_Recurring extends Payment_ExpressCheckout {
 
 	protected function _set_params()
 	{
-		return array_replace(parent::set_params(), array(
+		return array_replace(parent::_set_params(), array(
 			'PAYMENTREQUEST_0_AMT'             => 0,
 			'PAYMENTREQUEST_0_ITEMAMT'         => 0,
 			'PAYMENTREQUEST_0_SHIPPINGAMT'     => 0,

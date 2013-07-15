@@ -28,7 +28,7 @@ class Payment_ExpressCheckout extends Payment {
 	 */
 	public function set_express_checkout()
 	{
-		return $this->_request('SetExpressCheckout', $this->set_params());
+		return $this->_request('SetExpressCheckout', $this->_set_params());
 	}
 
 	public function do_express_checkout_payment($token, $payer_id)
@@ -95,7 +95,7 @@ class Payment_ExpressCheckout extends Payment {
 
 	protected function _request($method, array $params = array())
 	{
-		return parent::request(Payment::merchant_endpoint_url(), array(
+		return $this->request(Payment::merchant_endpoint_url(), array(
 			'METHOD'    => $method,
 			'VERSION'   => Payment_ExpressCheckout::API_VERSION,
 			'USER'      => $this->config('username'),

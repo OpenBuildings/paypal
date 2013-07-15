@@ -93,7 +93,7 @@ abstract class Payment {
 	public static function environment()
 	{
 		if ( ! in_array(Payment::$environment, Payment::$_allowed_environments))
-			throw new Exception('PayPal environment :environment is not allowed!', array(
+			throw new Exception('PayPal environment ":environment" is not allowed!', array(
 				':environment' => Payment::$environment
 			));
 

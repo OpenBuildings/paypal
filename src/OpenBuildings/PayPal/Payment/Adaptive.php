@@ -285,7 +285,7 @@ class Payment_Adaptive extends Payment {
 
 		try
 		{
-			return parent::request($url, $request_data, $headers);
+			return $this->request($url, $request_data, $headers);
 		}
 		catch (Request_Exception $exception)
 		{

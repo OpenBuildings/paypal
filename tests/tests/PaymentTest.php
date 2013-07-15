@@ -93,7 +93,14 @@ class PaymentTest extends \PHPUnit_Framework_TestCase {
 
 	public function test_order()
 	{
-		
+		$this->assertSame(array(), $this->payment->order());
+
+		$this->payment->order(array(
+			'total_price' => 10
+		));
+		$this->assertSame(array(
+			'total_price' => 10
+		), $this->payment->order());
 	}
 
 	public function test_return_url()
@@ -129,7 +136,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(Payment::ENVIRONMENT_LIVE, Payment::environment());
 
 		Payment::$environment = 'not-existing-environment';
-		$this->setExpectedException('OpenBuildings\PayPal\Exception');
+		$this->setExpectedException('OpenBuildings\PayPal\Exception', 'PayPal environment "not-existing-environment" is not allowed!');
 		Payment::environment();
 	}
 
