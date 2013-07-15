@@ -17,4 +17,32 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase {
 
 		$payment->get_express_checkout_details(array());
 	}
+
+	public function test_get_express_checkout_details_request()
+	{
+		$mock_payment = $this->getMockBuilder('Payment_ExpressCheckout')
+			->setMethods(NULL)
+			->getMock();
+		
+		// set $callOriginalMethods to TRUE for the mock
+		$mock_payment = $this->getMock('Payment_ExpressCheckout', NULL, array(), '', TRUE, TRUE, TRUE, FALSE, TRUE);
+
+		$mock_payment
+			->expects($this->once())
+			->method('request')
+			->with($this->identicalTo('https://api-3t.sandbox.paypal.com/nvp', $this->identicalTo(array(
+				'METHOD' => 'GetExpressCheckoutDetails',
+				'VERSION' => '98.0',
+				'USER' => '',
+				'PWD' => '',
+				'SIGNATURE' => '',
+				'TOKEN' => 'ABCDE',
+				'param' => 'value'
+			))));
+
+		$mock_payment->get_express_checkout_details(array(
+			'TOKEN' => 'ABCDE',
+			'param' => 'value'
+		));
+	}
 }
