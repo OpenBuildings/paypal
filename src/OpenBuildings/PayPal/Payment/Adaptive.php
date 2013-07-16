@@ -16,6 +16,18 @@ class Payment_Adaptive extends Payment {
 	const WEBAPPS_ENDPOINT_END = 'paypal.com/webapps/adaptivepayment/flow/pay';
 
 	/**
+	 * Pay API operation
+	 * https://developer.paypal.com/webapps/developer/docs/classic/api/adaptive-payments/Pay_API_Operation/
+	 */
+	const API_METHOD_PAY = 'Pay';
+
+	/**
+	 * ExecutePayment API operation
+	 * https://developer.paypal.com/webapps/developer/docs/classic/api/adaptive-payments/ExecutePayment_API_Operation/
+	 */
+	const API_METHOD_EXECUTE_PAYMENT = 'ExecutePayment';
+
+	/**
 	 * Use this option if you are not using the Pay request in combination with ExecutePayment
 	 */
 	const ACTION_TYPE_PAY = 'PAY';
@@ -131,7 +143,7 @@ class Payment_Adaptive extends Payment {
 
 	protected $_implicit_approval = FALSE;
 
-	protected $_action_type = 'PAY';
+	protected $_action_type = self::ACTION_TYPE_PAY;
 
 	public function __construct(array $config = array())
 	{
@@ -197,20 +209,9 @@ class Payment_Adaptive extends Payment {
 			$fields['ipnNotificationUrl'] = $this->notify_url();
 		}
 
-		if (($payment_type = $this->config('payment_type'))
-		 AND (is_string($payment_type) OR is_array($payment_type)))
+		if ($payment_type = $this->payment_type())
 		{
-			$payment_type = (is_string($payment_type))
-				? $payment_type
-				: (( ! empty($payment_type['primary']))
-					? $payment_type['primary']
-					: FALSE
-				);
-
-			if ($payment_type)
-			{
-				$fields['receiverList'][0]['paymentType'] = $payment_type;
-			}
+			$fields['receiverList'][0]['paymentType'] = $payment_type;
 		}
 
 		return $fields;
@@ -261,6 +262,43 @@ class Payment_Adaptive extends Payment {
 		return $this;
 	}
 
+	/**
+	 * Parse and return a payment type
+	 * @param  string|array $payment_type optional base to parse; if not provided config would be used
+	 * @return string|NULL a valid payment type or NULL
+	 * @throws OpenBuildings\PayPal\Exception If the provided payment type is not allowed
+	 */
+	public function payment_type($payment_type = NULL)
+	{
+		if ($payment_type === NULL)
+		{
+			$payment_type = $this->config('payment_type');
+		}
+
+		if ($payment_type
+		 AND (is_string($payment_type) OR is_array($payment_type)))
+		{
+			$payment_type = (is_string($payment_type))
+				? $payment_type
+				: (( ! empty($payment_type['primary']))
+					? $payment_type['primary']
+					: FALSE
+				);
+
+			if ($payment_type)
+			{
+				if ( ! in_array($payment_type, Payment_Adaptive::$_allowed_payment_types))
+					throw new Exception('Payment type ":payment_type" is not allowed!', array(
+						':payment_type' => $payment_type
+					));
+
+				return $payment_type;
+			}
+		}
+
+		return NULL;
+	}
+
 	public function do_payment()
 	{
 		$fields = $this->fields();
@@ -274,12 +312,12 @@ class Payment_Adaptive extends Payment {
 	 */
 	public function pay($data)
 	{
-		$response = $this->_request('Pay', $data);
+		$response = $this->_request(Payment_Adaptive::API_METHOD_PAY, $data);
 
 		if ( ! isset($response['responseEnvelope_ack'])
 		 OR strpos($response['responseEnvelope_ack'], 'Success') === FALSE)
-			throw new Request_Exception('PayPal AdaptivePayments API request for :method method failed: :error (:code)', array(
-				':method' => 'Pay',
+			throw new Request_Exception('PayPal AdaptivePayments API request for ":method" method failed: :error (:code)', array(
+				':method' => Payment_Adaptive::API_METHOD_PAY,
 				':error' => $response['error(0)_message'],
 				':code' => $response['error(0)_errorId']
 			));
@@ -292,7 +330,7 @@ class Payment_Adaptive extends Payment {
 	 */
 	public function execute_payment($data)
 	{
-		$response = $this->_request('ExecutePayment', $data);
+		$response = $this->_request(Payment_Adaptive::API_METHOD_EXECUTE_PAYMENT, $data);
 
 		if ((isset($response['payErrorList']) AND $response['payErrorList'])
 		 OR (isset($response['paymentExecStatus'])
@@ -300,10 +338,11 @@ class Payment_Adaptive extends Payment {
 		 	'ERROR',
 		 	'REVERSALERROR'
 		 ))))
-			throw new Request_Exception('PayPal ExecutePayment API request failed. :errors',  array(
-				':errors' => isset($response['payErrorList']) ?
-				 print_r($response['payErrorList'], TRUE) :
-				 ('Status was '.$response['paymentExecStatus'])
+			throw new Request_Exception('PayPal AdaptivePayments API request for ":method" method failed. :errors',  array(
+				':method' => Payment_Adaptive::API_METHOD_EXECUTE_PAYMENT,
+				':errors' => isset($response['payErrorList'])
+					? print_r($response['payErrorList'], TRUE)
+					: ('Status was '.$response['paymentExecStatus'])
 			));
 
 		return $response;
@@ -326,7 +365,7 @@ class Payment_Adaptive extends Payment {
 
 		try
 		{
-			return $this->request($url, $request_data, $headers);
+			return Payment_Request::adaptive_request($url, $request_data, $headers);
 		}
 		catch (Request_Exception $exception)
 		{
@@ -335,21 +374,5 @@ class Payment_Adaptive extends Payment {
 
 			throw $exception;
 		}
-	}
-
-	protected function _parse_response($response_string, $url, $request_data)
-	{
-		// Parse the response
-		parse_str($response_string, $response);
-
-		if ( ! isset($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE)
-			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error:code.', $url, $request_data, array(
-				':url' => $url,
-				':error' => isset($response['error(0)_message']) ? $response['error(0)_message'] : 'Unknown error',
-				':code' => isset($response['error(0)_errorId']) ? ' ('.$response['error(0)_errorId'].')' : '',
-			), $response);
-
-		return $response;
-
 	}
 }

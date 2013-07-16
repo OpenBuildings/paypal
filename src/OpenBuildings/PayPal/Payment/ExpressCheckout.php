@@ -95,12 +95,15 @@ class Payment_ExpressCheckout extends Payment {
 
 	protected function _request($method, array $params = array())
 	{
-		return $this->request(Payment::merchant_endpoint_url(), array(
+		$url = Payment::merchant_endpoint_url();
+		$request_data = array(
 			'METHOD'    => $method,
 			'VERSION'   => Payment_ExpressCheckout::API_VERSION,
 			'USER'      => $this->config('username'),
 			'PWD'       => $this->config('password'),
 			'SIGNATURE' => $this->config('signature'),
-		) + $params);
+		) + $params;
+
+		return Payment_Request::simple_request($url, $request_data);
 	}
 }
