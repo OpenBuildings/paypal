@@ -48,7 +48,7 @@ class Payment_ExpressCheckout extends Payment {
 			// Shipping costs for the whole transaction
 			'PAYMENTREQUEST_0_SHIPPINGAMT'   => number_format($order['shipping_price'], 2, '.', ''),
 
-			'PAYMENTREQUEST_0_CURRENCYCODE'  => $this->config['currency'],
+			'PAYMENTREQUEST_0_CURRENCYCODE'  => $this->config('currency'),
 
 			'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale'
 		));
