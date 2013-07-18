@@ -70,6 +70,30 @@ abstract class Payment {
 		return $result;
 	}
 
+	/**
+	 * Parse response string without parse_str()
+	 * parse_str converts dots and spaces to underscores.
+	 * The reason is because all keys must be valid PHP variable names.
+	 * @param  string $response_string a key value pair like param1=value1&param2=value2
+	 * @return array
+	 */
+	public static function parse_response($response_string)
+	{
+		$response_raw_array = explode('&', $response_string);
+		$response = array();
+		foreach ($response_raw_array as $keyval)
+		{
+			$keyval = explode('=', $keyval);
+			
+			if (count($keyval) === 2)
+			{
+				$response[$keyval[0]] = urldecode($keyval[1]);
+			}
+		}
+
+		return $response;
+	}
+
 	public static function merchant_endpoint_url()
 	{
 		return Payment::MERCHANT_ENDPOINT_START.Payment::environment().Payment::MERCHANT_ENDPOINT_END;
@@ -300,8 +324,7 @@ abstract class Payment {
 
 	protected function _parse_response($response_string, $url, $request_data)
 	{
-		// Parse the response
-		parse_str($response_string, $response);
+		$response = Payment::parse_response($response_string);
 
 		if ( ! isset($response['ACK']) OR strpos($response['ACK'], 'Success') === FALSE)
 			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error:code.', $url, $request_data, array(

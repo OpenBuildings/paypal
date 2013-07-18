@@ -264,10 +264,9 @@ class Payment_Adaptive extends Payment {
 
 	protected function _parse_response($response_string, $url, $request_data)
 	{
-		// Parse the response
-		parse_str($response_string, $response);
-		if ((empty($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE)
-		 AND (empty($response['responseEnvelope_ack']) OR strpos($response['responseEnvelope_ack'], 'Success') === FALSE))
+		$response = Payment::parse_response($response_string);
+
+		if ((empty($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE))
 		{
 			if ( ! empty($response['error(0)_message']))
 			{
