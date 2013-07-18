@@ -233,17 +233,7 @@ class Payment_Adaptive extends Payment {
 	 */
 	public function pay($data)
 	{
-		$response = $this->_request('Pay', $data);
-
-		if ( ! isset($response['responseEnvelope_ack'])
-		 OR strpos($response['responseEnvelope_ack'], 'Success') === FALSE)
-			throw new Request_Exception('PayPal AdaptivePayments API request for :method method failed: :error (:code)', array(
-				':method' => 'Pay',
-				':error' => $response['error(0)_message'],
-				':code' => $response['error(0)_errorId']
-			));
-
-		return $response;
+		return $this->_request('Pay', $data);
 	}
 
 	/**
@@ -259,7 +249,7 @@ class Payment_Adaptive extends Payment {
 		 	'ERROR',
 		 	'REVERSALERROR'
 		 ))))
-			throw new Request_Exception('PayPal ExecutePayment API request failed. :errors',  array(
+			throw new Request_Exception('PayPal ExecutePayment API request failed. :errors', Payment_Adaptive::ap_api_url('ExecutePayment'), $data, array(
 				':errors' => isset($response['payErrorList']) ?
 				 print_r($response['payErrorList'], TRUE) :
 				 ('Status was '.$response['paymentExecStatus'])
