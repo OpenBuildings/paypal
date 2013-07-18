@@ -268,9 +268,9 @@ class Payment_Adaptive extends Payment {
 
 		if ((empty($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE))
 		{
-			if ( ! empty($response['error(0)_message']))
+			if ( ! empty($response['error(0).message']))
 			{
-				$error_message = $response['error(0)_message'];
+				$error_message = $response['error(0).message'];
 			}
 			elseif ( ! empty($response['payErrorList'])
 			 OR ( ! empty($response['paymentExecStatus']) AND in_array($response['paymentExecStatus'], array(
@@ -290,14 +290,13 @@ class Payment_Adaptive extends Payment {
 			}
 			else
 			{
-				var_dump($response);die;
 				$error_message = 'Unknown error';
 			}
 
 			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error:code.', $url, $request_data, array(
 				':url' => $url,
 				':error' => $error_message,
-				':code' => isset($response['error(0)_errorId']) ? ' ('.$response['error(0)_errorId'].')' : '',
+				':code' => isset($response['error(0).errorId']) ? ' ('.$response['error(0).errorId'].')' : '',
 			), $response);
 		}
 
