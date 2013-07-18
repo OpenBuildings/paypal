@@ -312,17 +312,7 @@ class Payment_Adaptive extends Payment {
 	 */
 	public function pay($data)
 	{
-		$response = $this->_request(Payment_Adaptive::API_METHOD_PAY, $data);
-
-		if ( ! isset($response['responseEnvelope_ack'])
-		 OR strpos($response['responseEnvelope_ack'], 'Success') === FALSE)
-			throw new Request_Exception('PayPal AdaptivePayments API request for ":method" method failed: :error (:code)', array(
-				':method' => Payment_Adaptive::API_METHOD_PAY,
-				':error' => $response['error(0)_message'],
-				':code' => $response['error(0)_errorId']
-			));
-
-		return $response;
+		return $this->_request(Payment_Adaptive::API_METHOD_PAY, $data);
 	}
 
 	/**
@@ -338,12 +328,17 @@ class Payment_Adaptive extends Payment {
 		 	'ERROR',
 		 	'REVERSALERROR'
 		 ))))
-			throw new Request_Exception('PayPal AdaptivePayments API request for ":method" method failed. :errors',  array(
-				':method' => Payment_Adaptive::API_METHOD_EXECUTE_PAYMENT,
-				':errors' => isset($response['payErrorList'])
-					? print_r($response['payErrorList'], TRUE)
-					: ('Status was '.$response['paymentExecStatus'])
-			));
+			throw new Request_Exception(
+				'PayPal AdaptivePayments API request for ":method" method failed. :errors',
+				Payment_Adaptive::ap_api_url(Payment_Adaptive::API_METHOD_EXECUTE_PAYMENT),
+				$data,
+				array(
+					':method' => Payment_Adaptive::API_METHOD_EXECUTE_PAYMENT,
+					':errors' => isset($response['payErrorList'])
+						? print_r($response['payErrorList'], TRUE)
+						: ('Status was '.$response['paymentExecStatus'])
+				)
+			);
 
 		return $response;
 	}
