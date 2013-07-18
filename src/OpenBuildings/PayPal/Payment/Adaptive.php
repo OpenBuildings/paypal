@@ -241,21 +241,7 @@ class Payment_Adaptive extends Payment {
 	 */
 	public function execute_payment($data)
 	{
-		$response = $this->_request('ExecutePayment', $data);
-
-		if ((isset($response['payErrorList']) AND $response['payErrorList'])
-		 OR (isset($response['paymentExecStatus'])
-		  AND in_array($response['paymentExecStatus'], array(
-		 	'ERROR',
-		 	'REVERSALERROR'
-		 ))))
-			throw new Request_Exception('PayPal ExecutePayment API request failed. :errors', Payment_Adaptive::ap_api_url('ExecutePayment'), $data, array(
-				':errors' => isset($response['payErrorList']) ?
-				 print_r($response['payErrorList'], TRUE) :
-				 ('Status was '.$response['paymentExecStatus'])
-			));
-
-		return $response;
+		return $this->_request('ExecutePayment', $data);
 	}
 
 	protected function _request($method, array $request_data = array())
@@ -273,32 +259,49 @@ class Payment_Adaptive extends Payment {
 			'X-PAYPAL-APPLICATION-ID: '.$this->config('app_id'),
 		);
 
-		try
-		{
 			return $this->request($url, $request_data, $headers);
-		}
-		catch (Request_Exception $exception)
-		{
-			if ($exception->response)
-				return $exception->response;
-
-			throw $exception;
-		}
 	}
 
 	protected function _parse_response($response_string, $url, $request_data)
 	{
 		// Parse the response
 		parse_str($response_string, $response);
+		if ((empty($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE)
+		 AND (empty($response['responseEnvelope_ack']) OR strpos($response['responseEnvelope_ack'], 'Success') === FALSE))
+		{
+			if ( ! empty($response['error(0)_message']))
+			{
+				$error_message = $response['error(0)_message'];
+			}
+			elseif ( ! empty($response['payErrorList'])
+			 OR ( ! empty($response['paymentExecStatus']) AND in_array($response['paymentExecStatus'], array(
+			 	'ERROR',
+			 	'REVERSALERROR'
+			 )))
+			)
+			{
+				if (empty($response['payErrorList']))
+				{
+					$error_message = 'Status was '.$response['paymentExecStatus'];
+				}
+				else
+				{
+					$error_message = print_r($response['payErrorList'], TRUE);
+				}
+			}
+			else
+			{
+				var_dump($response);die;
+				$error_message = 'Unknown error';
+			}
 
-		if ( ! isset($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE)
 			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error:code.', $url, $request_data, array(
 				':url' => $url,
-				':error' => isset($response['error(0)_message']) ? $response['error(0)_message'] : 'Unknown error',
+				':error' => $error_message,
 				':code' => isset($response['error(0)_errorId']) ? ' ('.$response['error(0)_errorId'].')' : '',
 			), $response);
+		}
 
 		return $response;
-
 	}
 }
