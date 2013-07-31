@@ -165,7 +165,7 @@ class Payment_Adaptive extends Payment {
 			$fields['senderEmail'] = $this->config('email');
 		}
 
-		if ( ! in_array($this->config('fees_payer'), Payment_Adaptive::$_allowed_fees_payer_types))
+		if ( ! in_array($this->config('fees_payer'), self::$_allowed_fees_payer_types))
 			throw new Exception('Fees payer type ":feesPayer" is not allowed!', array(
 				':feesPayer' => $this->config('fees_payer')
 			));
