@@ -12,12 +12,10 @@ branches:
     - master
     - /^feature-.*$/
 
-script:
-  - mkdir -p build/logs
-  - phpunit --coverage-clover build/logs/clover.xml
+script: phpunit --coverage-clover build/logs/clover.xml
 
 before_script:
-  - composer install --dev
+  - mkdir -p build/logs
+  - composer require --dev satooshi/php-coveralls:0.6.*
 
-after_script:
-  php vendor/bin/coveralls -v
+after_script: php vendor/bin/coveralls -v
