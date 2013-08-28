@@ -4,6 +4,16 @@ Global configuration
 `Payment::$config` is a static variable which is merged with other configurations.
 It is useful for setting authentication credenetials or a default currency.
 
+Credentials consist of the following:
+
+ - `app_id`
+ - `username`
+ - `password`
+ - `signature`
+ - `email`
+
+Different PayPal APIs use different authentication mechanisms. Consult with the PayPal developer documentation which to use.
+
 Instance configuration
 ----------------------
 
