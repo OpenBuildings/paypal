@@ -23,8 +23,6 @@ class Payment_ExpressCheckout extends Payment {
 
 	/**
 	 * Make an SetExpressCheckout call.
-	 *
-	 * @param array $params NVP parameters
 	 */
 	public function set_express_checkout()
 	{
