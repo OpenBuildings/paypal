@@ -199,7 +199,7 @@ abstract class Payment {
 	}
 
 	/**
-	 * Validates an IPN request from PayPayl.
+	 * Validates an IPN request from Paypal.
 	 */
 	public function verify_ipn($data)
 	{

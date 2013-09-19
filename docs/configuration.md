@@ -2,7 +2,7 @@ Global configuration
 --------------------
 
 `Payment::$config` is a static variable which is merged with other configurations.
-It is useful for setting authentication credenetials or a default currency.
+It is useful for setting authentication credentials or a default currency.
 
 Credentials consist of the following:
 
