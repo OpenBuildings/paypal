@@ -24,9 +24,9 @@ class Payment_ExpressCheckout extends Payment {
 	/**
 	 * Make an SetExpressCheckout call.
 	 */
-	public function set_express_checkout()
+	public function set_express_checkout(array $params = array())
 	{
-		return $this->_request('SetExpressCheckout', $this->_set_params());
+		return $this->_request('SetExpressCheckout', $this->_set_params($params));
 	}
 
 	public function do_express_checkout_payment($token, $payer_id)
@@ -52,11 +52,11 @@ class Payment_ExpressCheckout extends Payment {
 		));
 	}
 
-	protected function _set_params()
+	protected function _set_params(array $params = array())
 	{
 		$order = $this->order();
 
-		$params = array(
+		$defaultParams = array(
 			// Total amount for the transaction
 			'PAYMENTREQUEST_0_AMT' => number_format($order['total_price'], 2, '.', ''),
 
@@ -82,6 +82,7 @@ class Payment_ExpressCheckout extends Payment {
 
 			'ADDROVERRIDE' => 0,
 		);
+		$params = array_merge($defaultParams, $params);
 
 		if ($this->notify_url())
 		{
