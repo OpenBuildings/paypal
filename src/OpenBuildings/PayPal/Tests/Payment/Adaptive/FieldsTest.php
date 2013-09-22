@@ -1,13 +1,16 @@
 <?php
 
-namespace OpenBuildings\PayPal;
+namespace OpenBuildings\PayPal\Tests\Payment\Adaptive;
+
+use OpenBuildings\PayPal\Payment\Payment;
+use OpenBuildings\PayPal\Payment\Adaptive;
 
 /**
  * @author Haralan Dobrev <hdobrev@despark.com>
  * @copyright (c) 2013 OpenBuildings Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase
+class FieldsTest extends \PHPUnit_Framework_TestCase
 {
     public $payment;
 
@@ -22,7 +25,7 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase
                 'amount' => 10
             )
         ));
-        $this->payment->config('fees_payer', Payment_Adaptive::FEES_PAYER_EACHRECEIVER);
+        $this->payment->config('fees_payer', Adaptive::FEES_PAYER_EACHRECEIVER);
     }
 
     public function test_sender_email()
@@ -40,7 +43,7 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase
     {
         $this->payment->config('fees_payer', 'invalid_fees_payer');
 
-        $this->setExpectedException('OpenBuildings\PayPal\Exception', 'Fees payer type "invalid_fees_payer" is not allowed!');
+        $this->setExpectedException('OpenBuildings\PayPal\Payment\Exception', 'Fees payer type "invalid_fees_payer" is not allowed!');
 
         $this->payment->fields();
     }

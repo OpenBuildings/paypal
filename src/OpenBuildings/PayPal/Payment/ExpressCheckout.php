@@ -2,6 +2,8 @@
 
 namespace OpenBuildings\PayPal\Payment;
 
+use OpenBuildings\PayPal\Payment\Payment;
+
 /**
  * @author Haralan Dobrev <hdobrev@despark.com>
  * @copyright (c) 2013 OpenBuildings Inc.
@@ -96,7 +98,7 @@ class ExpressCheckout extends Payment
     {
         return $this->request(Payment::merchant_endpoint_url(), array(
             'METHOD'    => $method,
-            'VERSION'   => Payment_ExpressCheckout::API_VERSION,
+            'VERSION'   => self::API_VERSION,
             'USER'      => $this->config('username'),
             'PWD'       => $this->config('password'),
             'SIGNATURE' => $this->config('signature'),

@@ -1,13 +1,15 @@
 <?php
 
-namespace OpenBuildings\PayPal;
+namespace OpenBuildings\PayPal\Tests\Payment;
+
+use OpenBuildings\PayPal\Payment\Payment;
 
 /**
  * @author Haralan Dobrev <hdobrev@despark.com>
  * @copyright (c) 2013 OpenBuildings Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase
+class ExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
@@ -20,14 +22,14 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         $payment = Payment::instance('ExpressCheckout');
 
-        $this->setExpectedException('OpenBuildings\PayPal\Exception', 'You must provide a TOKEN parameter for method "OpenBuildings\PayPal\Payment_ExpressCheckout::get_express_checkout_details"');
+        $this->setExpectedException('OpenBuildings\PayPal\Payment\Exception', 'You must provide a TOKEN parameter for method "OpenBuildings\PayPal\Payment\ExpressCheckout::get_express_checkout_details"');
 
         $payment->get_express_checkout_details(array());
     }
 
     public function test_get_express_checkout_details_request()
     {
-        $mock_payment = $this->getMock('OpenBuildings\PayPal\Payment_ExpressCheckout', array('request'));
+        $mock_payment = $this->getMock('OpenBuildings\PayPal\Payment\ExpressCheckout', array('request'));
 
         $mock_payment
             ->expects($this->once())
@@ -50,7 +52,7 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
     public function test_set_express_checkout()
     {
-        $mock_payment = $this->getMock('OpenBuildings\PayPal\Payment_ExpressCheckout', array('request'));
+        $mock_payment = $this->getMock('OpenBuildings\PayPal\Payment\ExpressCheckout', array('request'));
 
         $mock_payment
             ->expects($this->once())
@@ -90,7 +92,7 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
     public function test_do_express_checkout_payment()
     {
-        $mock_payment = $this->getMock('OpenBuildings\PayPal\Payment_ExpressCheckout', array('request'));
+        $mock_payment = $this->getMock('OpenBuildings\PayPal\Payment\ExpressCheckout', array('request'));
 
         $mock_payment
             ->expects($this->once())

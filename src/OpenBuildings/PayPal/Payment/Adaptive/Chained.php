@@ -7,7 +7,7 @@ namespace OpenBuildings\PayPal\Payment\Adaptive;
  * @copyright (c) 2013 OpenBuildings Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Chained extends Payment_Adaptive_Parallel
+class Chained extends Parallel
 {
     protected static $_allowed_action_types = array(
         self::ACTION_TYPE_PAY,

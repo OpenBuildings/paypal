@@ -93,13 +93,13 @@ class Adaptive extends Payment
             $params['expType'] = 'mini';
         }
 
-        return Payment::ENDPOINT_START.Payment::environment().Payment_Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
+        return Payment::ENDPOINT_START.Payment::environment().Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
     }
 
     public static function approve_url($pay_key, $mobile = FALSE)
     {
         if ($mobile)
-            return Payment_Adaptive::webapps_url(array(
+            return Adaptive::webapps_url(array(
                 'paykey' => $pay_key
             ), TRUE);
 
@@ -113,7 +113,7 @@ class Adaptive extends Payment
      */
     public static function ap_api_url($method = NULL)
     {
-        $api_endpoint = Payment_Adaptive::AP_ENDPOINT_START.Payment::environment().Payment_Adaptive::AP_ENDPOINT_END;
+        $api_endpoint = Adaptive::AP_ENDPOINT_START.Payment::environment().Adaptive::AP_ENDPOINT_END;
 
         if ($method) {
             $api_endpoint .= '/'.$method;
@@ -132,8 +132,8 @@ class Adaptive extends Payment
     public function common_fields()
     {
         return array(
-            'requestEnvelope.errorLanguage' => Payment_Adaptive::ERROR_LANGUAGE,
-            'requestEnvelope.detailLevel' => Payment_Adaptive::DETAIL_LEVEL,
+            'requestEnvelope.errorLanguage' => Adaptive::ERROR_LANGUAGE,
+            'requestEnvelope.detailLevel' => Adaptive::DETAIL_LEVEL,
         );
     }
 
@@ -241,7 +241,7 @@ class Adaptive extends Payment
 
     protected function _request($method, array $request_data = array())
     {
-        $url = Payment_Adaptive::ap_api_url($method);
+        $url = Adaptive::ap_api_url($method);
         $request_data = array_merge($request_data, $this->common_fields());
 
         $headers = array(

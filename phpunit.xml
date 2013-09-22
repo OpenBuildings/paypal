@@ -1,7 +1,7 @@
 <phpunit colors="true" bootstrap="vendor/autoload.php">
 	<testsuites>
 		<testsuite>
-			<directory>tests/tests</directory>
+            <directory>src/OpenBuildings/PayPal/Tests</directory>
 		</testsuite>
 	</testsuites>
 	<filter>

@@ -2,12 +2,14 @@
 
 namespace OpenBuildings\PayPal\Payment\Adaptive;
 
+use OpenBuildings\PayPal\Payment\Adaptive;
+
 /**
  * @author Haralan Dobrev <hdobrev@despark.com>
  * @copyright (c) 2013 OpenBuildings Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Parallel extends Payment_Adaptive
+class Parallel extends Adaptive
 {
     public function fields()
     {

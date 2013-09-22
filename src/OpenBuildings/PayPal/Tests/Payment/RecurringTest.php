@@ -1,6 +1,6 @@
 <?php
 
-class Payment_RecurringTest extends PHPUnit_Framework_TestCase
+class RecurringTest extends PHPUnit_Framework_TestCase
 {
     public function test_transaction_amount()
     {

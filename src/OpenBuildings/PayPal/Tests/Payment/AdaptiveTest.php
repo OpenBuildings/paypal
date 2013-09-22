@@ -1,27 +1,30 @@
 <?php
 
-namespace OpenBuildings\PayPal;
+namespace OpenBuildings\PayPal\Tests\Payment;
+
+use OpenBuildings\PayPal\Payment\Payment;
+use OpenBuildings\PayPal\Payment\Adaptive;
 
 /**
  * @author Haralan Dobrev <hdobrev@despark.com>
  * @copyright (c) 2013 OpenBuildings Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase
+class AdaptiveTest extends \PHPUnit_Framework_TestCase
 {
     public function test_webapps_url()
     {
         Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
-        $this->assertEquals('https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay', Payment_Adaptive::webapps_url());
+        $this->assertEquals('https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay', Adaptive::webapps_url());
 
         Payment::$environment = Payment::ENVIRONMENT_LIVE;
-        $this->assertEquals('https://www.paypal.com/webapps/adaptivepayment/flow/pay?param1=value1&param2=value2', Payment_Adaptive::webapps_url(array(
+        $this->assertEquals('https://www.paypal.com/webapps/adaptivepayment/flow/pay?param1=value1&param2=value2', Adaptive::webapps_url(array(
             'param1' => 'value1',
             'param2' => 'value2'
         )));
 
         Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
-        $this->assertEquals('https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay?param1=value1&param2=value2&expType=mini', Payment_Adaptive::webapps_url(array(
+        $this->assertEquals('https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay?param1=value1&param2=value2&expType=mini', Adaptive::webapps_url(array(
             'param1' => 'value1',
             'param2' => 'value2'
         ), TRUE));
@@ -30,19 +33,19 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase
     public function test_approve_url()
     {
         Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
-        $this->assertEquals('https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay?paykey=some_pay_key&expType=mini', Payment_Adaptive::approve_url('some_pay_key', TRUE));
+        $this->assertEquals('https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay?paykey=some_pay_key&expType=mini', Adaptive::approve_url('some_pay_key', TRUE));
 
         Payment::$environment = Payment::ENVIRONMENT_LIVE;
-        $this->assertEquals('https://www.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=some_pay_key', Payment_Adaptive::approve_url('some_pay_key'));
+        $this->assertEquals('https://www.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=some_pay_key', Adaptive::approve_url('some_pay_key'));
     }
 
     public function test_ap_api_url()
     {
         Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
-        $this->assertEquals('https://svcs.sandbox.paypal.com/AdaptivePayments', Payment_Adaptive::ap_api_url());
+        $this->assertEquals('https://svcs.sandbox.paypal.com/AdaptivePayments', Adaptive::ap_api_url());
 
         Payment::$environment = Payment::ENVIRONMENT_LIVE;
-        $this->assertEquals('https://svcs.paypal.com/AdaptivePayments/ExecutePayment', Payment_Adaptive::ap_api_url('ExecutePayment'));
+        $this->assertEquals('https://svcs.paypal.com/AdaptivePayments/ExecutePayment', Adaptive::ap_api_url('ExecutePayment'));
     }
 
     public function test_common_fields()
