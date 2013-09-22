@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenBuildings\PayPal;
+namespace OpenBuildings\PayPal\Payment\Adaptive;
 
 /**
  * @author Haralan Dobrev <hdobrev@despark.com>

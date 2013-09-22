@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenBuildings\PayPal;
+namespace OpenBuildings\PayPal\Payment;
 
 /**
  * @abstract
@@ -45,7 +45,7 @@ abstract class Payment
     public static function instance($name, array $config = array())
     {
         if (empty(self::$instances[$name])) {
-            $class = "OpenBuildings\\PayPal\\Payment_$name";
+            $class = sprintf("%s\\%s", __NAMESPACE__, $name);
             self::$instances[$name] = new $class($config);
         }
 
