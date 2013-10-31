@@ -13,7 +13,7 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase {
 	{
 		parent::setUp();
 
-		Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
+		Payment::environment(Payment::ENVIRONMENT_SANDBOX);
 	}
 
 	public function test_get_express_checkout_details_require_token()

@@ -68,21 +68,21 @@ class PaymentTest extends \PHPUnit_Framework_TestCase {
 
 	public function test_merchant_endpoint_url()
 	{
-		Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
+		Payment::environment(Payment::ENVIRONMENT_SANDBOX);
 		$this->assertEquals('https://api-3t.sandbox.paypal.com/nvp', Payment::merchant_endpoint_url());
 
-		Payment::$environment = Payment::ENVIRONMENT_LIVE;
+		Payment::environment(Payment::ENVIRONMENT_LIVE);
 		$this->assertEquals('https://api-3t.paypal.com/nvp', Payment::merchant_endpoint_url());
 	}
 
 	public function test_webscr_url()
 	{
-		Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
+		Payment::environment(Payment::ENVIRONMENT_SANDBOX);
 		$this->assertEquals('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&param=value', Payment::webscr_url('_ap-payment', array(
 			'param' => 'value'
 		)));
 
-		Payment::$environment = Payment::ENVIRONMENT_LIVE;
+		Payment::environment(Payment::ENVIRONMENT_LIVE);
 		$this->assertEquals('https://www.paypal.com/cgi-bin/webscr?cmd=_ap-payment', Payment::webscr_url('_ap-payment'));
 	}
 
@@ -129,15 +129,14 @@ class PaymentTest extends \PHPUnit_Framework_TestCase {
 
 	public function test_environment()
 	{
-		Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
+		Payment::environment(Payment::ENVIRONMENT_SANDBOX);
 		$this->assertEquals(Payment::ENVIRONMENT_SANDBOX, Payment::environment());
 
-		Payment::$environment = Payment::ENVIRONMENT_LIVE;
+		Payment::environment(Payment::ENVIRONMENT_LIVE);
 		$this->assertEquals(Payment::ENVIRONMENT_LIVE, Payment::environment());
 
-		Payment::$environment = 'not-existing-environment';
 		$this->setExpectedException('OpenBuildings\PayPal\Exception', 'PayPal environment "not-existing-environment" is not allowed!');
-		Payment::environment();
+		Payment::environment('not-existing-environment');
 	}
 
 }

@@ -24,8 +24,6 @@ abstract class Payment {
 
 	public static $instances = array();
 
-	public static $environment = Payment::ENVIRONMENT_SANDBOX;
-
 	public static $config = array(
 		'app_id' => '',
 		'username' => '',
@@ -38,9 +36,11 @@ abstract class Payment {
 	);
 
 	protected static $_allowed_environments = array(
-		Payment::ENVIRONMENT_LIVE,
-		Payment::ENVIRONMENT_SANDBOX
+		self::ENVIRONMENT_LIVE,
+		self::ENVIRONMENT_SANDBOX
 	);
+
+	private static $environment = self::ENVIRONMENT_SANDBOX;
 	
 	public static function instance($name, array $config = array())
 	{
@@ -96,7 +96,7 @@ abstract class Payment {
 
 	public static function merchant_endpoint_url()
 	{
-		return Payment::MERCHANT_ENDPOINT_START.Payment::environment().Payment::MERCHANT_ENDPOINT_END;
+		return self::MERCHANT_ENDPOINT_START.self::environment().self::MERCHANT_ENDPOINT_END;
 	}
 
 	/**
@@ -111,17 +111,20 @@ abstract class Payment {
 			$params = array_reverse($params, TRUE);
 		}
 
-		return Payment::ENDPOINT_START.Payment::environment().Payment::WEBSCR_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
+		return self::ENDPOINT_START.self::environment().self::WEBSCR_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
 	}
 
-	public static function environment()
+	public static function environment($environment = NULL)
 	{
-		if ( ! in_array(Payment::$environment, Payment::$_allowed_environments))
+		if ($environment === NULL)
+			return self::$environment;
+
+		if ( ! in_array($environment, self::$_allowed_environments))
 			throw new Exception('PayPal environment ":environment" is not allowed!', array(
-				':environment' => Payment::$environment
+				':environment' => $environment
 			));
 
-		return Payment::$environment;
+		self::$environment = $environment;
 	}
 
 	/**
