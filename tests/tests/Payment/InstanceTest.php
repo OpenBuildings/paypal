@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenBuildings\PayPal;
+use OpenBuildings\PayPal\Payment;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>

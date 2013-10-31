@@ -1,6 +1,7 @@
 <?php
 
-namespace OpenBuildings\PayPal;
+use OpenBuildings\PayPal\Payment;
+use OpenBuildings\PayPal\Payment_Adaptive;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
@@ -9,6 +10,9 @@ namespace OpenBuildings\PayPal;
  */
 class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::webapps_url
+	 */
 	public function test_webapps_url()
 	{
 		Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
@@ -27,6 +31,9 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 		), TRUE));
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::approve_url
+	 */
 	public function test_approve_url()
 	{
 		Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
@@ -36,6 +43,9 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('https://www.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=some_pay_key', Payment_Adaptive::approve_url('some_pay_key'));
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::ap_api_url
+	 */
 	public function test_ap_api_url()
 	{
 		Payment::$environment = Payment::ENVIRONMENT_SANDBOX;
@@ -45,6 +55,9 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('https://svcs.paypal.com/AdaptivePayments/ExecutePayment', Payment_Adaptive::ap_api_url('ExecutePayment'));
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::common_fields
+	 */
 	public function test_common_fields()
 	{
 		$this->assertSame(array(
@@ -53,6 +66,9 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 		), Payment::instance('Adaptive')->common_fields());
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::implicit_approval
+	 */
 	public function test_implicit_approval()
 	{
 		$payment = Payment::instance('Adaptive');
@@ -65,6 +81,9 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 		$this->assertFalse($payment->implicit_approval());
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::action_type
+	 */
 	public function test_action_type()
 	{
 		$payment = Payment::instance('Adaptive');
@@ -74,6 +93,9 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('CREATE', $payment->action_type());
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::do_payment
+	 */
 	public function test_do_payment()
 	{
 		
