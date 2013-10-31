@@ -15,6 +15,10 @@ class Payment_Adaptive extends Payment {
 
 	const WEBAPPS_ENDPOINT_END = 'paypal.com/webapps/adaptivepayment/flow/pay';
 
+	const API_OPERATION_PAY = 'Pay';
+
+	const API_OPERATION_EXECUTE_PAYMENT = 'ExecutePayment';
+
 	/**
 	 * Use this option if you are not using the Pay request in combination with ExecutePayment
 	 */
@@ -233,7 +237,7 @@ class Payment_Adaptive extends Payment {
 	 */
 	public function pay($data)
 	{
-		return $this->_request('Pay', $data);
+		return $this->_request(self::API_OPERATION_PAY, $data);
 	}
 
 	/**
@@ -241,7 +245,7 @@ class Payment_Adaptive extends Payment {
 	 */
 	public function execute_payment($data)
 	{
-		return $this->_request('ExecutePayment', $data);
+		return $this->_request(self::API_OPERATION_EXECUTE_PAYMENT, $data);
 	}
 
 	protected function _request($method, array $request_data = array())
