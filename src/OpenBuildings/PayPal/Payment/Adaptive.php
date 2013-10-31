@@ -98,13 +98,13 @@ class Payment_Adaptive extends Payment {
 			$params['expType'] = 'mini';
 		}
 
-		return Payment::ENDPOINT_START.Payment::environment().Payment_Adaptive::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
+		return Payment::ENDPOINT_START.Payment::environment().self::WEBAPPS_ENDPOINT_END.($params ? '?'.http_build_query($params) : '');
 	}
 
 	public static function approve_url($pay_key, $mobile = FALSE)
 	{
 		if ($mobile)
-			return Payment_Adaptive::webapps_url(array(
+			return static::webapps_url(array(
 				'paykey' => $pay_key
 			), TRUE);
 
@@ -118,7 +118,7 @@ class Payment_Adaptive extends Payment {
 	 */
 	public static function ap_api_url($method = NULL)
 	{
-		$api_endpoint = Payment_Adaptive::AP_ENDPOINT_START.Payment::environment().Payment_Adaptive::AP_ENDPOINT_END;
+		$api_endpoint = self::AP_ENDPOINT_START.Payment::environment().self::AP_ENDPOINT_END;
 
 		if ($method)
 		{
@@ -126,6 +126,47 @@ class Payment_Adaptive extends Payment {
 		}
 
 		return $api_endpoint;
+	}
+
+	public static function parse_response($response_string, $url, $request_data)
+	{
+		$response = Util::parse_str($response_string);
+
+		if ((empty($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE))
+		{
+			if ( ! empty($response['error(0).message']))
+			{
+				$error_message = $response['error(0).message'];
+			}
+			elseif ( ! empty($response['payErrorList'])
+			 OR ( ! empty($response['paymentExecStatus']) AND in_array($response['paymentExecStatus'], array(
+			 	'ERROR',
+			 	'REVERSALERROR'
+			 )))
+			)
+			{
+				if (empty($response['payErrorList']))
+				{
+					$error_message = 'Status was '.$response['paymentExecStatus'];
+				}
+				else
+				{
+					$error_message = print_r($response['payErrorList'], TRUE);
+				}
+			}
+			else
+			{
+				$error_message = 'Unknown error';
+			}
+
+			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error:code.', $url, $request_data, array(
+				':url' => $url,
+				':error' => $error_message,
+				':code' => isset($response['error(0).errorId']) ? ' ('.$response['error(0).errorId'].')' : '',
+			), $response);
+		}
+
+		return $response;
 	}
 
 	protected $_implicit_approval = FALSE;
@@ -138,13 +179,14 @@ class Payment_Adaptive extends Payment {
 	public function common_fields()
 	{
 		return array(
-			'requestEnvelope.errorLanguage' => Payment_Adaptive::ERROR_LANGUAGE,
-			'requestEnvelope.detailLevel' => Payment_Adaptive::DETAIL_LEVEL,
+			'requestEnvelope.errorLanguage' => self::ERROR_LANGUAGE,
+			'requestEnvelope.detailLevel' => self::DETAIL_LEVEL,
 		);
 	}
 
 	/**
-	 * NVP fields for a Simple payment
+	 * Get the NVP fields array fusion from the order and the configuration
+	 * @return array
 	 */
 	public function fields()
 	{
@@ -200,20 +242,27 @@ class Payment_Adaptive extends Payment {
 	}
 
 	/**
-	 * Change the implicit approval
-	 * @param  [type] $implicit_approval [description]
-	 * @return [type]                    [description]
+	 * Get or set whether this is an implicitly approved payment
+	 *
+	 * @param  boolean $implicit_approval
+	 * @return boolean|$this
 	 */
 	public function implicit_approval($implicit_approval = NULL)
 	{
 		if ($implicit_approval === NULL)
 			return $this->_implicit_approval;
 
-		$this->_implicit_approval = $implicit_approval;
+		$this->_implicit_approval = (bool) $implicit_approval;
 
 		return $this;
 	}
 
+	/**
+	 * Get or set the action type
+	 *
+	 * @param  string $action_type See Payment_Adaptive::$_allowed_action_types
+	 * @return string|$this
+	 */
 	public function action_type($action_type = NULL)
 	{
 		if ($action_type === NULL)
@@ -227,13 +276,18 @@ class Payment_Adaptive extends Payment {
 	public function do_payment()
 	{
 		$fields = $this->fields();
-		$receiver_list = Payment::array_to_nvp($fields, 'receiverList', 'receiver');
-		unset($fields['receiverList']);
+
+		if ( ! empty($fields['receiverList']))
+		{
+			$receiver_list = Util::array_to_nvp($fields, 'receiverList', 'receiver');
+			unset($fields['receiverList']);
+		}
+
 		return $this->pay(array_merge_recursive($fields, $receiver_list));
 	}
 
 	/**
-	 * Performs a Pay API request.
+	 * Perform low-level Pay API request.
 	 */
 	public function pay($data)
 	{
@@ -241,7 +295,7 @@ class Payment_Adaptive extends Payment {
 	}
 
 	/**
-	 * Performs an ExecutePayment API request.
+	 * Perform a low-level ExecutePayment API request.
 	 */
 	public function execute_payment($data)
 	{
@@ -250,7 +304,7 @@ class Payment_Adaptive extends Payment {
 
 	protected function _request($method, array $request_data = array())
 	{
-		$url = Payment_Adaptive::ap_api_url($method);
+		$url = static::ap_api_url($method);
 		$request_data = array_merge($request_data, $this->common_fields());
 
 		$headers = array(
@@ -263,47 +317,6 @@ class Payment_Adaptive extends Payment {
 			'X-PAYPAL-APPLICATION-ID: '.$this->config('app_id'),
 		);
 
-			return $this->request($url, $request_data, $headers);
-	}
-
-	protected function _parse_response($response_string, $url, $request_data)
-	{
-		$response = Payment::parse_response($response_string);
-
-		if ((empty($response['responseEnvelope.ack']) OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE))
-		{
-			if ( ! empty($response['error(0).message']))
-			{
-				$error_message = $response['error(0).message'];
-			}
-			elseif ( ! empty($response['payErrorList'])
-			 OR ( ! empty($response['paymentExecStatus']) AND in_array($response['paymentExecStatus'], array(
-			 	'ERROR',
-			 	'REVERSALERROR'
-			 )))
-			)
-			{
-				if (empty($response['payErrorList']))
-				{
-					$error_message = 'Status was '.$response['paymentExecStatus'];
-				}
-				else
-				{
-					$error_message = print_r($response['payErrorList'], TRUE);
-				}
-			}
-			else
-			{
-				$error_message = 'Unknown error';
-			}
-
-			throw new Request_Exception('PayPal API request did not succeed for :url failed: :error:code.', $url, $request_data, array(
-				':url' => $url,
-				':error' => $error_message,
-				':code' => isset($response['error(0).errorId']) ? ' ('.$response['error(0).errorId'].')' : '',
-			), $response);
-		}
-
-		return $response;
+		return $this->request($url, $request_data, $headers);
 	}
 }
