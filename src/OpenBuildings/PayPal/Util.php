@@ -35,7 +35,7 @@ class Util {
 	 * @param  string $response_string a key value pair like param1=value1&param2=value2
 	 * @return array
 	 */
-	public function parse_str($response_string)
+	public static function parse_str($response_string)
 	{
 		$response_raw_array = explode('&', $response_string);
 		$response = array();
