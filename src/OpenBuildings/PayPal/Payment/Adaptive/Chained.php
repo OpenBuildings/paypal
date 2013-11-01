@@ -27,26 +27,16 @@ class Payment_Adaptive_Chained extends Payment_Adaptive_Parallel {
 		$fields = parent::fields();
 		$order = $this->order();
 
-		$fields['receiverList'][0]['amount'] = number_format($order['total_price'], 2, '.', '');
-
-		$i = 1;
-		foreach ($order['receivers'] as $receiver)
+		foreach ($order['receivers'] as $index => $receiver)
 		{
-			if ($receiver['email'] != $this->config('email'))
-			{
-				$fields['receiverList'][$i]['primary'] = 'false';
-				$i++;
-			}
+			$fields['receiverList'][$index]['primary'] = empty($receiver['primary'])
+				? 'false'
+				: 'true';
 		}
 
-		if ($i > 1)
+		if ($this->config('pay_only_primary') AND $this->action_type() == 'PAY')
 		{
-			$fields['receiverList'][0]['primary'] = 'true';
-			
-			if ($this->config('pay_only_primary') AND $action_type == 'PAY')
-			{
-				$fields['actionType'] = 'PAY_PRIMARY';
-			}
+			$fields['actionType'] = 'PAY_PRIMARY';
 		}
 
 		return $fields;

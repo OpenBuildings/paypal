@@ -9,6 +9,6 @@ class Payment_Adaptive_ParallelTest extends \PHPUnit_Framework_TestCase {
 
 	public function test_fields()
 	{
-		
+		$this->markTestIncomplete();
 	}
 }

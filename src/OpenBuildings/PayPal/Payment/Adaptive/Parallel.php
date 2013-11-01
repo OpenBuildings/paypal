@@ -29,29 +29,18 @@ class Payment_Adaptive_Parallel extends Payment_Adaptive {
 
 		$receivers_share = 0;
 
-		$i = 1;
-		foreach ($order['receivers'] as $receiver)
+		foreach ($order['receivers'] as $index => $receiver)
 		{
-			if ($receiver['email'] != $this->config('email'))
+			$fields['receiverList'][$index]['amount'] = number_format($receiver['amount'], 2, '.', '');
+
+			$fields['receiverList'][$index]['email'] = $receiver['email'];
+
+			if ($payment_type)
 			{
-				$fields['receiverList'][$i]['amount'] = number_format($store_share, 2, '.', '');
-
-				$fields['receiverList'][$i]['email'] = $receiver['email'];
-
-				if ($payment_type)
-				{
-					$fields['receiverList'][$i]['paymentType'] = $payment_type;
-				}
-
-				$receivers_share += $store_share;
-
-				$i++;
+				$fields['receiverList'][$index]['paymentType'] = $payment_type;
 			}
 		}
-		
-		$fields['receiverList'][0]['amount'] = number_format($fields['receiverList'][0]['amount'] - $receivers_share, 2, '.', '');
 
 		return $fields;
 	}
-
 }

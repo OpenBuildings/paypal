@@ -98,6 +98,14 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function test_do_payment()
 	{
-		
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::fields
+	 */
+	public function test_fields()
+	{
+		$this->markTestIncomplete();
 	}
 }

@@ -196,15 +196,19 @@ class Payment_Adaptive extends Payment {
 			'returnUrl' => $this->return_url(),
 			'cancelUrl' => $this->cancel_url(),
 			'actionType' => $this->action_type(),
-			'receiverList' => array(
+			'currencyCode' => $this->config('currency'),
+			'reverseAllParallelPaymentsOnError' => $this->config('reverse_on_error') ? 'true' : 'false'
+		);
+
+		if (isset($order['receiver']))
+		{
+			$fields['receiverList'] = array(
 				array(
 					'email' => $order['receiver']['email'],
 					'amount' => number_format($order['receiver']['amount'], 2, '.', ''),
 				)
-			),
-			'currencyCode' => $this->config('currency'),
-			'reverseAllParallelPaymentsOnError' => $this->config('reverse_on_error') ? 'true' : 'false'
-		);
+			);
+		}
 
 		if ($this->implicit_approval())
 		{
