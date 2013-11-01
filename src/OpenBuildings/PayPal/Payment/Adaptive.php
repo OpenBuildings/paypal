@@ -285,9 +285,10 @@ class Payment_Adaptive extends Payment {
 		{
 			$receiver_list = Util::array_to_nvp($fields, 'receiverList', 'receiver');
 			unset($fields['receiverList']);
+			$fields = array_merge_recursive($fields, $receiver_list);
 		}
 
-		return $this->pay(array_merge_recursive($fields, $receiver_list));
+		return $this->pay($fields);
 	}
 
 	/**
