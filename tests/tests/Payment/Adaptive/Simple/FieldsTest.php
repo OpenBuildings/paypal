@@ -1,14 +1,14 @@
 <?php
 
 use OpenBuildings\PayPal\Payment;
-use OpenBuildings\PayPal\Payment_Adaptive;
+use OpenBuildings\PayPal\Payment_Adaptive_Simple;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
  * @copyright 2013 OpenBuildings, Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
+class Payment_Adaptive_Simple_FieldsTest extends \PHPUnit_Framework_TestCase {
 
 	public $payment;
 
@@ -16,16 +16,21 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
 	{
 		parent::setUp();
 
-		$this->payment = Payment::instance('Adaptive');
+		$this->payment = Payment::instance('Adaptive_Simple');
 		$this->payment->order(array(
 			'receiver' => array(
 				'email' => 'contact@example.com',
 				'amount' => 10
 			)
 		));
-		$this->payment->config('fees_payer', Payment_Adaptive::FEES_PAYER_EACHRECEIVER);
+		$this->payment
+			->config('fees_payer', Payment_Adaptive_Simple::FEES_PAYER_EACHRECEIVER)
+			->config('email', 'sender@example.com');
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Simple::fields
+	 */
 	public function test_sender_email()
 	{
 		$this->payment->implicit_approval(TRUE);
@@ -37,6 +42,17 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertArrayNotHasKey('senderEmail', $this->payment->fields());
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Simple::fields
+	 */
+	public function test_sender_account_id()
+	{
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Simple::fields
+	 */
 	public function test_validate_fees_payer()
 	{
 		$this->payment->config('fees_payer', 'invalid_fees_payer');
@@ -46,6 +62,9 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
 		$this->payment->fields();
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Simple::fields
+	 */
 	public function test_ipn_url()
 	{
 		$this->payment->notify_url('example.com/ipn');
@@ -56,6 +75,9 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('example.com/ipn', $fields['ipnNotificationUrl']);
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Simple::fields
+	 */
 	public function test_tracking_id()
 	{
 		$this->payment->order(array(
@@ -70,5 +92,22 @@ class Payment_Adaptive_FieldsTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertArrayHasKey('trackingId', $fields);
 		$this->assertEquals('ABCDE', $fields['trackingId']);
+	}
+
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Simple::fields
+	 */
+	public function test_reverse_on_error()
+	{
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Simple::fields
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Simple::_set_payment_type
+	 */
+	public function test_set_payment_type()
+	{
+		$this->markTestIncomplete();
 	}
 }

@@ -4,6 +4,224 @@ use OpenBuildings\PayPal\Util;
 
 class UtilTest extends \PHPUnit_Framework_TestCase {
 
+	public function data_receiver_list()
+	{
+		return array(
+			// empty receiver list
+			array(
+				array(), FALSE, array(),
+				array(), TRUE, array(),
+			),
+			// basic usage
+			array(
+				array(
+					array(
+						'amount' => 50.00,
+						'email' => 'test-sender@example.com',
+					)
+				), FALSE, array(
+					array(
+						'amount' => '50.00',
+						'email' => 'test-sender@example.com',
+					)
+				),
+			),
+			// basic usage with number_format
+			array(
+				array(
+					array(
+						'amount' => 50.056,
+						'email' => 'test-sender@example.com',
+					)
+				), FALSE, array(
+					array(
+						'amount' => '50.06',
+						'email' => 'test-sender@example.com',
+					)
+				),
+			),
+			// basic usage with accountId
+			array(
+				array(
+					array(
+						'amount' => 50.056,
+						'accountId' => 'abcde',
+					)
+				), FALSE, array(
+					array(
+						'amount' => '50.06',
+						'accountId' => 'abcde',
+					)
+				),
+			),
+			// basic usage with both accountId and email
+			array(
+				array(
+					array(
+						'amount' => 50.056,
+						'email' => 'test-sender@example.com',
+						'accountId' => 'abcde',
+					)
+				), FALSE, array(
+					array(
+						'amount' => '50.06',
+						'email' => 'test-sender@example.com',
+						'accountId' => 'abcde',
+					)
+				),
+			),
+			// basic usage with chained payments
+			array(
+				array(
+					array(
+						'amount' => 50.00,
+						'email' => 'test-sender@example.com',
+					)
+				), TRUE, array(
+					array(
+						'amount' => '50.00',
+						'email' => 'test-sender@example.com',
+						'primary' => 'false',
+					)
+				),
+			),
+			// multiple receivers
+			array(
+				array(
+					array(
+						'amount' => 50.00,
+						'email' => 'abc@example.com',
+					),
+					array(
+						'amount' => 50.00,
+						'email' => 'test-sender@example.com',
+					),
+				), FALSE, array(
+					array(
+						'amount' => '50.00',
+						'email' => 'abc@example.com',
+					),
+					array(
+						'amount' => '50.00',
+						'email' => 'test-sender@example.com',
+					),
+				),
+			),
+			// multiple receivers with chained payments
+			array(
+				array(
+					array(
+						'amount' => 50.00,
+						'email' => 'abc@example.com',
+					),
+					array(
+						'amount' => 50.00,
+						'email' => 'test-sender@example.com',
+					),
+				), TRUE, array(
+					array(
+						'amount' => '50.00',
+						'email' => 'abc@example.com',
+						'primary' => 'false'
+					),
+					array(
+						'amount' => '50.00',
+						'email' => 'test-sender@example.com',
+						'primary' => 'false',
+					),
+				),
+			),
+			// multiple receivers with chained payments
+			array(
+				array(
+					array(
+						'amount' => 50.00,
+						'email' => 'abc@example.com',
+						'primary' => TRUE,
+					),
+					array(
+						'amount' => 50.00,
+						'email' => 'test-sender@example.com',
+					),
+				), TRUE, array(
+					array(
+						'amount' => '50.00',
+						'email' => 'abc@example.com',
+						'primary' => 'true',
+					),
+					array(
+						'amount' => '50.00',
+						'email' => 'test-sender@example.com',
+						'primary' => 'false',
+					),
+				),
+			),
+			// big test
+			array(
+				array(
+					array(
+						'amount' => 50.00,
+						'email' => 'test1@example.com',
+						'primary' => TRUE,
+					),
+					array(
+						'amount' => 4350.031,
+						'email' => 'test2@example.com',
+						'accountId' => 'poiu',
+					),
+					array(
+						'amount' => 34.5,
+						'email' => 'test3@example.com',
+						'primary' => 'd',
+					),
+					array(
+						'amount' => -2050,
+						'email' => 'test4@example.com',
+					),
+					array(
+						'amount' => '20.447',
+						'accountId' => 'test5',
+					),
+				), TRUE, array(
+					array(
+						'amount' => '50.00',
+						'email' => 'test1@example.com',
+						'primary' => 'true',
+					),
+					array(
+						'amount' => '4350.03',
+						'email' => 'test2@example.com',
+						'accountId' => 'poiu',
+						'primary' => 'false',
+					),
+					array(
+						'amount' => '34.50',
+						'email' => 'test3@example.com',
+						'primary' => 'true',
+					),
+					array(
+						'amount' => '2050.00',
+						'email' => 'test4@example.com',
+						'primary' => 'false',
+					),
+					array(
+						'amount' => '20.45',
+						'accountId' => 'test5',
+						'primary' => 'false',
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * @dataProvider data_receiver_list
+	 * @covers OpenBuildings\PayPal\Util::receiver_list
+	 */
+	public function test_receiver_list($receivers, $chained, $expected_receiver_list)
+	{
+		$this->assertSame($expected_receiver_list, Util::receiver_list($receivers, $chained));
+	}
 
 	public function data_array_to_nvp()
 	{

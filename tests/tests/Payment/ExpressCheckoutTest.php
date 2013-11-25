@@ -16,6 +16,9 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase {
 		Payment::environment(Payment::ENVIRONMENT_SANDBOX);
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_ExpressCheckout::get_express_checkout_details
+	 */
 	public function test_get_express_checkout_details_require_token()
 	{
 		$payment = Payment::instance('ExpressCheckout');
@@ -25,6 +28,10 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase {
 		$payment->get_express_checkout_details(array());
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_ExpressCheckout::get_express_checkout_details
+	 * @covers OpenBuildings\PayPal\Payment_ExpressCheckout::_request
+	 */
 	public function test_get_express_checkout_details_request()
 	{
 		$mock_payment = $this->getMock('OpenBuildings\PayPal\Payment_ExpressCheckout', array('request'));
@@ -48,6 +55,10 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase {
 		));
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_ExpressCheckout::set_express_checkout
+	 * @covers OpenBuildings\PayPal\Payment_ExpressCheckout::_set_params
+	 */
 	public function test_set_express_checkout()
 	{
 		$mock_payment = $this->getMock('OpenBuildings\PayPal\Payment_ExpressCheckout', array('request'));
@@ -88,6 +99,9 @@ class Payment_ExpressCheckoutTest extends \PHPUnit_Framework_TestCase {
 		$mock_payment->set_express_checkout();
 	}
 
+	/**
+	 * @covers OpenBuildings\PayPal\Payment_ExpressCheckout::do_express_checkout_payment
+	 */
 	public function test_do_express_checkout_payment()
 	{
 		$mock_payment = $this->getMock('OpenBuildings\PayPal\Payment_ExpressCheckout', array('request'));

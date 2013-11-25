@@ -47,7 +47,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function test_config()
 	{
-
+		$this->markTestIncomplete();
 	}
 
 	/**

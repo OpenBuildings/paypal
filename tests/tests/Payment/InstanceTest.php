@@ -16,11 +16,11 @@ class Payment_InstanceTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('OpenBuildings\PayPal\Payment_ExpressCheckout', $express_checkout);
 	}
 
-	public function test_adaptive()
+	public function test_adaptive_simple()
 	{
-		$express_checkout = Payment::instance('Adaptive');
+		$express_checkout = Payment::instance('Adaptive_Simple');
 
-		$this->assertInstanceOf('OpenBuildings\PayPal\Payment_Adaptive', $express_checkout);
+		$this->assertInstanceOf('OpenBuildings\PayPal\Payment_Adaptive_Simple', $express_checkout);
 	}
 
 	public function test_express_adaptive_parallel()

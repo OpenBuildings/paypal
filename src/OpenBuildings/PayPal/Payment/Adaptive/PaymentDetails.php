@@ -21,4 +21,24 @@ class Payment_Adaptive_PaymentDetails extends Payment_Adaptive {
 
 		return $this->payment_details($transaction);
 	}
+	
+	public function fields()
+	{
+		$fields = parent::fields();
+		$order = $this->order();
+
+		foreach ($order['receivers'] as $index => $receiver)
+		{
+			$fields['receiverList'][$index]['primary'] = empty($receiver['primary'])
+				? 'false'
+				: 'true';
+		}
+
+		if ($this->config('pay_only_primary') AND $this->action_type() == 'PAY')
+		{
+			$fields['actionType'] = 'PAY_PRIMARY';
+		}
+
+		return $fields;
+	}
 }

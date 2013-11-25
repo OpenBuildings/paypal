@@ -4,6 +4,35 @@ namespace OpenBuildings\PayPal;
 
 class Util {
 
+	public static function receiver_list($receivers, $chained = FALSE)
+	{
+		$receiver_list = array();
+
+		foreach ($receivers as $index => $receiver)
+		{
+			$receiver_list[$index]['amount'] = number_format(abs( (float) $receiver['amount']), 2, '.', '');
+
+			if ( ! empty($receiver['email']))
+			{
+				$receiver_list[$index]['email'] = $receiver['email'];
+			}
+
+			if ( ! empty($receiver['accountId']))
+			{
+				$receiver_list[$index]['accountId'] = $receiver['accountId'];
+			}
+
+			if ($chained)
+			{
+				$receiver_list[$index]['primary'] = empty($receiver['primary'])
+					? 'false'
+					: 'true';
+			}
+		}
+
+		return $receiver_list;
+	}
+
 	public static function array_to_nvp(array $array, $key, $prefix)
 	{
 		$result = array();

@@ -24,7 +24,7 @@ You can set a configuration on an instance via the `config` method:
 - **associative array**
 
 ``` php
-Payment::instance('Adaptive')
+Payment::instance('Adaptive_Simple')
   ->config(array(
     'currency' => 'USD',
     'fees_payer' => Payment_Adaptive::FEES_PAYER_SENDER
@@ -36,7 +36,7 @@ or
 - **setter**
 
 ``` php
-Payment::instance('Adaptive')
+Payment::instance('Adaptive_Simple')
   ->config('payment_type', Payment_Adaptive::PAYMENT_TYPE_GOODS);
 ```
 

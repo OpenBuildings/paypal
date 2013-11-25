@@ -32,18 +32,6 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @covers OpenBuildings\PayPal\Payment_Adaptive::approve_url
-	 */
-	public function test_approve_url()
-	{
-		Payment::environment(Payment::ENVIRONMENT_SANDBOX);
-		$this->assertEquals('https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay?paykey=some_pay_key&expType=mini', Payment_Adaptive::approve_url('some_pay_key', TRUE));
-
-		Payment::environment(Payment::ENVIRONMENT_LIVE);
-		$this->assertEquals('https://www.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=some_pay_key', Payment_Adaptive::approve_url('some_pay_key'));
-	}
-
-	/**
 	 * @covers OpenBuildings\PayPal\Payment_Adaptive::ap_api_url
 	 */
 	public function test_ap_api_url()
@@ -63,48 +51,13 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 		$this->assertSame(array(
 			'requestEnvelope.errorLanguage' => 'en_US',
 			'requestEnvelope.detailLevel' => 'ReturnAll',
-		), Payment::instance('Adaptive')->common_fields());
+		), Payment::instance('Adaptive_Simple')->common_fields());
 	}
 
 	/**
-	 * @covers OpenBuildings\PayPal\Payment_Adaptive::implicit_approval
+	 * @covers OpenBuildings\PayPal\Payment_Adaptive::parse_response
 	 */
-	public function test_implicit_approval()
-	{
-		$payment = Payment::instance('Adaptive');
-		$this->assertFalse($payment->implicit_approval());
-
-		$payment->implicit_approval(TRUE);
-		$this->assertTRUE($payment->implicit_approval());
-
-		$payment->implicit_approval(FALSE);
-		$this->assertFalse($payment->implicit_approval());
-	}
-
-	/**
-	 * @covers OpenBuildings\PayPal\Payment_Adaptive::action_type
-	 */
-	public function test_action_type()
-	{
-		$payment = Payment::instance('Adaptive');
-		$this->assertEquals('PAY', $payment->action_type());
-
-		$payment->action_type('CREATE');
-		$this->assertEquals('CREATE', $payment->action_type());
-	}
-
-	/**
-	 * @covers OpenBuildings\PayPal\Payment_Adaptive::do_payment
-	 */
-	public function test_do_payment()
-	{
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @covers OpenBuildings\PayPal\Payment_Adaptive::fields
-	 */
-	public function test_fields()
+	public function test_parse_response()
 	{
 		$this->markTestIncomplete();
 	}
