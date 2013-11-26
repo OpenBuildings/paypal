@@ -19,7 +19,9 @@ class Payment_Adaptive_Refund extends Payment_Adaptive {
 		if (empty($transaction['payKey']) AND empty($transaction['trackingId']))
 			throw new Exception('You must provide either "payKey" or "trackingId" to Refund API operation.');
 
-		$data = array();
+		$data = array(
+			'currencyCode' => $this->config('currency')
+		);
 
 		if (isset($transaction['payKey']))
 		{
@@ -38,6 +40,10 @@ class Payment_Adaptive_Refund extends Payment_Adaptive {
 		if ($receivers)
 		{
 			$data['receiverList'] = Util::receiver_list($receivers, $chained);
+
+			$receiver_list = Util::array_to_nvp($data, 'receiverList', 'receiver');
+			unset($data['receiverList']);
+			$data = array_merge_recursive($data, $receiver_list);
 		}
 
 		return $this->refund($data);
