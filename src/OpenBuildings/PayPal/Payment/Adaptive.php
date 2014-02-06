@@ -53,8 +53,9 @@ abstract class Payment_Adaptive extends Payment {
 	{
 		$response = Util::parse_str($response_string);
 
-		if ((empty($response['responseEnvelope.ack'])
-		 OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE))
+		if (empty($response['responseEnvelope.ack'])
+		 OR strpos($response['responseEnvelope.ack'], 'Success') === FALSE
+		 OR (isset($response['paymentExecStatus']) AND ! in_array($response['paymentExecStatus'], array('CREATED', 'COMPLETED', 'INCOMPLETE', 'PROCESSING', 'PENDING'))))
 		{
 			if ( ! empty($response['error(0).message']))
 			{
@@ -93,7 +94,8 @@ abstract class Payment_Adaptive extends Payment {
 						? ' ('.$response['error(0).errorId'].')'
 						: '',
 				),
-			$response);
+				$response
+			);
 		}
 
 		return $response;
