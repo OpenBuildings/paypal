@@ -1,7 +1,9 @@
 __PayPal SDK for ExpressCheckout and Adaptive Payments.__
 
-[![Build Status](https://travis-ci.org/OpenBuildings/paypal.png?branch=master)](https://travis-ci.org/OpenBuildings/paypal) [![Latest Stable Version](https://poser.pugx.org/openbuildings/paypal/v/stable.png)](https://packagist.org/packages/openbuildings/paypal)
-[![Coverage Status](https://coveralls.io/repos/OpenBuildings/paypal/badge.png)](https://coveralls.io/r/OpenBuildings/paypal)
+[![Build Status](https://travis-ci.org/OpenBuildings/paypal.png?branch=master)](https://travis-ci.org/OpenBuildings/paypal)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/OpenBuildings/paypal/badges/quality-score.png?s=53b5b5f60d66af528e241107cd7466af31b5df7d)](https://scrutinizer-ci.com/g/OpenBuildings/paypal/)
+[![Code Coverage](https://scrutinizer-ci.com/g/OpenBuildings/paypal/badges/coverage.png?s=a95e1eef67c247cd5114cce36c33fe9cbea5e604)](https://scrutinizer-ci.com/g/OpenBuildings/paypal/)
+[![Latest Stable Version](https://poser.pugx.org/openbuildings/paypal/v/stable.png)](https://packagist.org/packages/openbuildings/paypal)
 
 Features:
  - recurring payments
