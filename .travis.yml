@@ -1,4 +1,3 @@
---- 
 language: php
 
 php:
@@ -12,10 +11,16 @@ branches:
     - master
     - /^feature-.*$/
 
-script: phpunit --coverage-clover build/logs/clover.xml
+install:
+  - composer selfupdate
 
 before_script:
   - mkdir -p build/logs
-  - composer require --dev satooshi/php-coveralls:0.6.*
+  - composer install
 
-after_script: php vendor/bin/coveralls -v
+script:
+  - phpunit --coverage-clover build/logs/clover.xml
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
