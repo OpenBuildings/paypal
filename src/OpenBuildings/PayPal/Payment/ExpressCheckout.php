@@ -11,6 +11,16 @@ class Payment_ExpressCheckout extends Payment {
 
 	const API_VERSION = '98.0';
 
+	const EXPRESSCHECKOUT_FORM_ACTION_END = 'paypal.com/incontext?token=';
+
+	public function ec_form_action_url($token)
+	{
+		return Payment::ENDPOINT_START
+			.Payment::environment()
+			.self::EXPRESSCHECKOUT_FORM_ACTION_END
+			.$token;
+	}
+
 	public function get_express_checkout_details(array $params)
 	{
 		if ( ! isset($params['TOKEN']))
