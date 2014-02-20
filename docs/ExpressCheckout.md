@@ -23,7 +23,7 @@ $response = $express_checkout
   ->set_express_checkout();
 ```
 
-Now when you have ```$response['TOKEN']``` you need to open a popup with Paypal page:
+Now when you have ```$response['TOKEN']``` you need to open a popup with Paypal page. You can get valid URL for the form action by ```$express_checkout->ec_form_action_url($response['TOKEN'])```:
 ```html
 <form action="https://www.paypal.com/incontext?token=TOKEN" method="POST">
     <input type='image' name='paypal_submit' id='paypal_submit'
