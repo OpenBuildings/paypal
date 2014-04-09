@@ -5,6 +5,11 @@ php:
   - 5.4
   - 5.5
 
+notifications:
+  email: false
+  slack:
+    secure: CTD/5X1ey784JVeCDp7SuflL5tLEcKz5Ueg4+GUjlvjjSFGTfTO3vlFgGfT9ByM0DUuzghW2THGaf0xlyXrYDk1QJ4bPWxVhnGoToauhxWm3mkm3USM/53+RNlOP1S3dlFeo/2P4rBvip3mcj+xyDHy4DoXyWNFliVMPGS9uw60=
+
 #whitelist
 branches:
   only:
@@ -13,10 +18,10 @@ branches:
 
 install:
   - composer selfupdate
+  - composer install
 
 before_script:
   - mkdir -p build/logs
-  - composer install
 
 script:
   - phpunit --coverage-clover build/logs/clover.xml
