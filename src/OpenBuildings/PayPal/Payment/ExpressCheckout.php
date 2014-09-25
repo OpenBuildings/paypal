@@ -51,6 +51,32 @@ class Payment_ExpressCheckout extends Payment {
 			'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale'
 		));
 	}
+	
+        /**
+         * Make a RefundTransaction call.
+         *
+         * @param string $transaction_id the paypal transaction id
+         * @param string $type type of refund "Full" or "Partial"
+         * @param null $amount amount of refund (only for partial type)
+         * @param null $currency_code currency code of refund (only for partial type)
+         * @param null $note memo description
+         */
+        public function refund_transaction($transaction_id, $type, $amount = null, $currency_code = null, $note = '')
+        {
+
+            $params = array(
+                'TRANSACTIONID' => $transaction_id,
+                'REFUNDTYPE' => $type
+            );
+
+            if (strtolower($type) == 'partial') {
+                $params['AMT'] = $amount;
+                $params['CURRENCYCODE'] = $currency_code ? $currency_code : $this->config('currency');
+                $params['NOTE'] = $note;
+            }
+
+            return $this->_request('RefundTransaction', $params);
+        }
 
 	protected function _set_params(array $params = array())
 	{
