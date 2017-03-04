@@ -14,6 +14,11 @@ Credentials consist of the following:
 
 Different PayPal APIs use different authentication mechanisms. Consult with the PayPal developer documentation which to use.
 
+In order to run in a sandbox mode use:
+```php
+Payment::environment(Payment::ENVIRONMENT_SANDBOX);
+```
+
 Instance configuration
 ----------------------
 
