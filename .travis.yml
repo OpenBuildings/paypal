@@ -1,9 +1,14 @@
 language: php
 
 php:
-  - 5.3
-  - 5.4
-  - 5.5
+  - 7.1
+  - 7.2
+  - 7.3
+
+env:
+  - DEPS=normal
+  - DEPS=highest
+  - DEPS=lowest
 
 notifications:
   email: false
@@ -16,15 +21,19 @@ branches:
     - master
     - /^feature-.*$/
 
+before_install:
+  - travis_retry composer selfupdate --preview
+
 install:
-  - composer selfupdate
-  - composer install
+  - if [ "$DEPS" = "normal" ]; then travis_retry composer install --no-interaction; fi;
+  - if [ "$DEPS" = "highest" ]; then travis_retry composer update --no-interaction; fi;
+  - if [ "$DEPS" = "lowest" ]; then travis_retry composer update --no-interaction --prefer-lowest --prefer-stable; fi;
 
 before_script:
   - mkdir -p build/logs
 
 script:
-  - phpunit --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar

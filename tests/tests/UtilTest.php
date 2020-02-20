@@ -1,8 +1,9 @@
 <?php
 
 use OpenBuildings\PayPal\Util;
+use PHPUnit\Framework\TestCase;
 
-class UtilTest extends \PHPUnit_Framework_TestCase {
+class UtilTest extends TestCase {
 
 	public function data_receiver_list()
 	{

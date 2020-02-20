@@ -1,13 +1,14 @@
 <?php
 
 use OpenBuildings\PayPal\Payment;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
  * @copyright 2013 OpenBuildings, Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class PaymentTest extends \PHPUnit_Framework_TestCase {
+class PaymentTest extends TestCase {
 
 	public function setUp()
 	{
@@ -109,7 +110,8 @@ class PaymentTest extends \PHPUnit_Framework_TestCase {
 		Payment::environment(Payment::ENVIRONMENT_LIVE);
 		$this->assertEquals(Payment::ENVIRONMENT_LIVE, Payment::environment());
 
-		$this->setExpectedException('OpenBuildings\PayPal\Exception', 'PayPal environment "not-existing-environment" is not allowed!');
+		$this->expectException('OpenBuildings\PayPal\Exception');
+		$this->expectExceptionMessage('PayPal environment "not-existing-environment" is not allowed!');
 		Payment::environment('not-existing-environment');
 	}
 
@@ -185,7 +187,8 @@ class PaymentTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function test_parse_response_exception($response_string, $url, $request_data, $exception_message)
 	{
-		$this->setExpectedException('OpenBuildings\PayPal\Request_Exception', $exception_message);
+		$this->expectException('OpenBuildings\PayPal\Request_Exception');
+		$this->expectExceptionMessage($exception_message);
 		Payment::parse_response($response_string, $url, $request_data);
 	}
 }

@@ -1,13 +1,14 @@
 <?php
 
 use OpenBuildings\PayPal\Payment;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
  * @copyright 2013 OpenBuildings, Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Payment_InstanceTest extends \PHPUnit_Framework_TestCase {
+class Payment_InstanceTest extends TestCase {
 
 	public function test_express_checkout()
 	{

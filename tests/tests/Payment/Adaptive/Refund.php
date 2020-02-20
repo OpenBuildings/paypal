@@ -1,8 +1,9 @@
 <?php
 
 use OpenBuildings\PayPal\Payment_Adaptive_Refund;
+use PHPUnit\Framework\TestCase;
 
-class Payment_Adaptive_RefundTest extends \PHPUnit_Framework_TestCase {
+class Payment_Adaptive_RefundTest extends TestCase {
 
 	/**
 	 * @covers OpenBuildings\PayPal\Payment_Adaptive_Refund::refund
