@@ -1,8 +1,9 @@
 <?php
 
 use OpenBuildings\PayPal\Payment_Adaptive_PaymentDetails;
+use PHPUnit\Framework\TestCase;
 
-class Payment_Adaptive_PaymentDetailsTest extends \PHPUnit_Framework_TestCase {
+class Payment_Adaptive_PaymentDetailsTest extends TestCase {
 
 	/**
 	 * @covers OpenBuildings\PayPal\Payment_Adaptive_PaymentDetails::payment_details

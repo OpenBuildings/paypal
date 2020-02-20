@@ -2,13 +2,14 @@
 
 use OpenBuildings\PayPal\Payment;
 use OpenBuildings\PayPal\Payment_Adaptive;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
  * @copyright 2013 OpenBuildings, Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
+class Payment_AdaptiveTest extends TestCase {
 
 	/**
 	 * @covers OpenBuildings\PayPal\Payment_Adaptive::webapps_url
@@ -140,11 +141,13 @@ class Payment_AdaptiveTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function test_parse_response($response, $expectedException)
 	{
-		if ($expectedException)
-		{
-			$this->setExpectedException('OpenBuildings\PayPal\Request_Exception', $expectedException);
+		if ($expectedException) {
+			$this->expectException('OpenBuildings\PayPal\Request_Exception');
+			$this->expectExceptionMessage($expectedException);
 		}
 
-		Payment_Adaptive::parse_response(http_build_query($response), 'http://example.com', array('data'));
+		$response = Payment_Adaptive::parse_response(http_build_query($response), 'http://example.com', array('data'));
+
+		$this->assertNotNull($response);
 	}
 }

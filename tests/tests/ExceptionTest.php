@@ -1,8 +1,9 @@
 <?php
 
 use OpenBuildings\PayPal\Exception;
+use PHPUnit\Framework\TestCase;
 
-class ExceptionTest extends \PHPUnit_Framework_TestCase {
+class ExceptionTest extends TestCase {
 
 	/**
 	 * @covers OpenBuildings\PayPal\Exception::__construct

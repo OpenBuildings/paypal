@@ -2,13 +2,14 @@
 
 use OpenBuildings\PayPal\Payment;
 use OpenBuildings\PayPal\Payment_Adaptive_Simple;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
  * @copyright 2013 OpenBuildings, Inc.
  * @license http://spdx.org/licenses/BSD-3-Clause
  */
-class Payment_Adaptive_Simple_FieldsTest extends \PHPUnit_Framework_TestCase {
+class Payment_Adaptive_Simple_FieldsTest extends TestCase {
 
 	public $payment;
 
@@ -57,7 +58,8 @@ class Payment_Adaptive_Simple_FieldsTest extends \PHPUnit_Framework_TestCase {
 	{
 		$this->payment->config('fees_payer', 'invalid_fees_payer');
 
-		$this->setExpectedException('OpenBuildings\PayPal\Exception', 'Fees payer type "invalid_fees_payer" is not allowed!');
+		$this->expectException('OpenBuildings\PayPal\Exception');
+		$this->expectExceptionMessage('Fees payer type "invalid_fees_payer" is not allowed!');
 
 		$this->payment->fields();
 	}
